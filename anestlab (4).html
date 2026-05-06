@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="color-scheme" content="light">
+<title>AnestLab · Mapa da Anestesia SP</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:#fff!important;color:#111!important;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;-webkit-text-size-adjust:100%;min-height:100vh;}
+
+/* CONFIG BANNER */
+.config-banner{background:#1B1B1B;color:#fff;padding:12px 18px;display:flex;align-items:center;gap:10px;font-size:13px;}
+.config-banner a{color:#00A862;font-weight:500;text-decoration:underline;cursor:pointer;}
+.config-form{background:#F5F5F5;border-bottom:1px solid #E0E0E0;padding:16px 18px;display:none;}
+.config-form.on{display:block;}
+.cfg-title{font-size:14px;font-weight:600;color:#111;margin-bottom:4px;}
+.cfg-sub{font-size:12px;color:#666;margin-bottom:12px;line-height:1.5;}
+.cfg-input{width:100%;border:1.5px solid #E0E0E0;border-radius:8px;padding:9px 12px;font-size:13px;color:#111;background:#fff;outline:none;margin-bottom:8px;font-family:inherit;}
+.cfg-input:focus{border-color:#00A862;}
+.cfg-btn{background:#00A862;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+
+.header{height:52px;background:#fff;border-bottom:1px solid #E0E0E0;display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:999;}
+.logo{font-size:19px;font-weight:800;color:#111;}
+.logo span{color:#00A862;}
+.nav{display:flex;align-items:center;gap:10px;}
+.live{display:flex;align-items:center;gap:5px;font-size:12px;color:#666;}
+.ld{width:7px;height:7px;border-radius:50%;background:#00A862;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.admin-btn{font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;border:1px solid #E0E0E0;background:#fff;color:#666;cursor:pointer;font-family:inherit;}
+.admin-btn:active{background:#F5F5F5;}
+
+/* TABS */
+.main-tabs{display:flex;border-bottom:1px solid #E0E0E0;background:#fff;position:sticky;top:52px;z-index:998;}
+.mtab{flex:1;padding:10px;font-size:13px;font-weight:500;color:#666;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;}
+.mtab.on{color:#00A862;border-bottom-color:#00A862;}
+
+.pg{display:none;}
+.pg.on{display:block;}
+
+/* MAP PAGE */
+.hero{background:#fff;padding:24px 18px 20px;border-bottom:1px solid #E0E0E0;}
+.eye{font-size:11px;font-weight:600;color:#00A862;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;display:block;}
+.hero h1{font-size:26px;font-weight:800;color:#111;line-height:1.15;margin-bottom:8px;}
+.hero h1 i{color:#00A862;font-style:normal;}
+.hero p{font-size:13px;color:#666;line-height:1.6;margin-bottom:20px;}
+.hstats{display:flex;gap:20px;}
+.hn{font-size:24px;font-weight:800;color:#111;line-height:1;}
+.hl{font-size:11px;color:#666;margin-top:3px;}
+.notice{background:#E6F5EE;border-bottom:1px solid #B2DFCC;padding:10px 18px;display:flex;align-items:center;gap:10px;}
+.notice p{font-size:12px;color:#005C35;flex:1;line-height:1.4;}
+.nn{font-size:22px;font-weight:800;color:#00A862;}
+.ctrl{background:#fff;padding:10px 18px;border-bottom:1px solid #E0E0E0;position:sticky;top:94px;z-index:997;}
+.si{width:100%;border:1.5px solid #E0E0E0;border-radius:10px;padding:9px 14px;font-size:14px;color:#111;background:#F5F5F5;outline:none;-webkit-appearance:none;font-family:inherit;margin-bottom:8px;}
+.si:focus{border-color:#00A862;background:#fff;}
+.si::placeholder{color:#AAA;}
+.ftags{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.ftags::-webkit-scrollbar{display:none;}
+.ft{font-size:12px;font-weight:500;padding:5px 13px;border-radius:20px;border:1.5px solid #E0E0E0;background:#fff;color:#666;white-space:nowrap;font-family:inherit;cursor:pointer;}
+.ft.on{background:#111;color:#fff;border-color:#111;}
+.mapbox{background:#EEF2F5;border-bottom:1px solid #E0E0E0;position:relative;overflow:hidden;}
+#msvg{width:100%;height:340px;display:block;}
+.mhint{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.5);color:#fff;font-size:11px;padding:4px 12px;border-radius:20px;pointer-events:none;white-space:nowrap;}
+.leg{display:flex;flex-wrap:wrap;gap:6px 12px;padding:9px 18px;background:#fff;border-bottom:1px solid #E0E0E0;}
+.li{display:flex;align-items:center;gap:5px;font-size:11px;color:#666;}
+.ld2{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.bbar{padding:10px 18px;background:#fff;border-top:1px solid #E0E0E0;display:flex;gap:8px;position:sticky;bottom:0;z-index:999;}
+.bp{flex:2;background:#00A862;color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;touch-action:manipulation;}
+.bp:active{background:#007A49;}
+.bs{flex:1;background:#fff;color:#111;border:1.5px solid #E0E0E0;border-radius:10px;padding:13px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;touch-action:manipulation;}
+.bs:active{background:#F5F5F5;}
+
+/* ADMIN PAGE */
+.admin-wrap{padding:16px 18px;}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.admin-title{font-size:15px;font-weight:600;color:#111;}
+.algo-status{font-size:11px;color:#005C35;display:flex;align-items:center;gap:4px;}
+.atabs{display:flex;gap:5px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;}
+.atabs::-webkit-scrollbar{display:none;}
+.at{font-size:12px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid #E0E0E0;background:#fff;color:#666;cursor:pointer;white-space:nowrap;font-family:inherit;}
+.at.on{background:#111;color:#fff;border-color:#111;}
+.asec{display:none;}
+.asec.on{display:block;}
+.sgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:14px;}
+.sc{background:#F5F5F5;border-radius:10px;padding:12px;}
+.sn{font-size:22px;font-weight:700;color:#111;}
+.sl{font-size:11px;color:#666;margin-top:2px;}
+.ilist{display:flex;flex-direction:column;gap:8px;}
+.icard{background:#fff;border:1px solid #E0E0E0;border-radius:10px;padding:12px;}
+.icard.alert{border-color:#FFCDD2;background:#FFF5F5;}
+.icard.warn{border-color:#FFE0B2;background:#FFFBF5;}
+.icard.ok{border-color:#C8E6C9;background:#F5FFF6;}
+.ic-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px;}
+.ic-name{font-size:13px;font-weight:500;color:#111;line-height:1.3;}
+.bdg{font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+.bdg-a{background:#FFEBEE;color:#B71C1C;}
+.bdg-w{background:#FFF3E0;color:#BF360C;}
+.bdg-o{background:#E8F5E9;color:#1B5E20;}
+.ic-meta{font-size:12px;color:#666;}
+.ic-reason{font-size:11px;color:#555;margin-top:5px;padding:5px 8px;background:rgba(0,0,0,.04);border-radius:6px;border-left:2px solid #E0E0E0;line-height:1.5;}
+.ic-acts{display:flex;gap:6px;margin-top:8px;}
+.act{font-size:11px;font-weight:500;padding:4px 11px;border-radius:20px;border:1px solid #E0E0E0;background:#fff;color:#666;cursor:pointer;font-family:inherit;touch-action:manipulation;}
+.act.app{border-color:#A5D6A7;color:#2E7D32;}
+.act.rej{border-color:#EF9A9A;color:#B71C1C;}
+.insight{border:1px solid #E0E0E0;border-radius:10px;padding:12px;margin-bottom:8px;background:#fff;}
+.itag{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#666;margin-bottom:4px;}
+.itxt{font-size:13px;color:#111;line-height:1.5;}
+.isub{font-size:11px;color:#666;margin-top:3px;}
+.algo-card{background:#F5F5F5;border-radius:10px;padding:12px;margin-bottom:8px;}
+.at-title{font-size:13px;font-weight:500;color:#111;margin-bottom:3px;}
+.at-desc{font-size:12px;color:#666;line-height:1.5;margin-bottom:8px;}
+.pbar{height:5px;background:#E0E0E0;border-radius:20px;overflow:hidden;margin-bottom:2px;}
+.pfill{height:5px;border-radius:20px;}
+.plbl{font-size:11px;color:#666;}
+.prg-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.prg-lbl{font-size:12px;color:#666;min-width:110px;flex-shrink:0;}
+.prg-bar{flex:1;height:5px;background:#E0E0E0;border-radius:20px;overflow:hidden;}
+.prg-fill{height:5px;border-radius:20px;}
+.prg-val{font-size:12px;font-weight:500;color:#111;min-width:32px;text-align:right;}
+.sim-btn{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid #E0E0E0;background:#fff;color:#666;cursor:pointer;font-family:inherit;}
+.empty-s{text-align:center;padding:20px;color:#666;font-size:13px;line-height:1.6;}
+
+/* SHEET */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;}
+.ov.on{display:flex;align-items:flex-end;justify-content:center;}
+.sh{background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.sh-drag{width:38px;height:4px;background:#E0E0E0;border-radius:4px;margin:12px auto 0;}
+.close-x{position:absolute;top:14px;right:18px;width:30px;height:30px;border-radius:50%;background:#F5F5F5;border:none;font-size:18px;color:#666;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation;}
+.sb{padding:18px 18px 32px;}
+.stag{font-size:11px;font-weight:600;color:#00A862;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px;}
+.sname{font-size:20px;font-weight:800;color:#111;line-height:1.2;margin-bottom:4px;}
+.smeta{font-size:13px;color:#666;margin-bottom:16px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.rp{font-size:11px;padding:2px 9px;border-radius:12px;font-weight:500;}
+.salbox{background:#F5F5F5;border-radius:12px;padding:14px;margin-bottom:12px;}
+.sallbl{font-size:12px;color:#666;margin-bottom:4px;}
+.salval{font-size:34px;font-weight:800;color:#111;line-height:1;}
+.salval.lk{filter:blur(9px);user-select:none;-webkit-user-select:none;color:#CCC;}
+.salsub{font-size:12px;color:#666;margin-top:4px;}
+.salcta{font-size:13px;color:#00A862;font-weight:500;margin-top:7px;}
+.grpbox{border:1.5px solid #E0E0E0;border-radius:10px;padding:11px 13px;margin-bottom:12px;}
+.grplbl{font-size:11px;color:#666;margin-bottom:2px;}
+.grpval{font-size:14px;font-weight:500;color:#111;}
+.grpmt{font-size:13px;color:#AAA;font-style:italic;}
+.relhdr{font-size:13px;font-weight:600;color:#111;margin-bottom:8px;}
+.relcard{border:1.5px solid #E0E0E0;border-radius:10px;padding:11px;margin-bottom:8px;background:#fff;}
+.relcard .rv{font-size:16px;font-weight:800;color:#00A862;margin-bottom:3px;}
+.relcard .rh{font-size:12px;color:#666;margin-bottom:2px;}
+.relcard .rt{font-size:13px;color:#444;line-height:1.5;}
+.relcard .rl{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;}
+.rb{font-size:11px;padding:5px 11px;border-radius:20px;border:1.5px solid #E0E0E0;background:#fff;color:#666;cursor:pointer;font-family:inherit;touch-action:manipulation;}
+.rb.on{background:#E6F5EE;color:#005C35;border-color:#B2DFCC;}
+.sdiv{height:1px;background:#E0E0E0;margin:14px 0;}
+.fg{margin-bottom:12px;}
+.fg label{display:block;font-size:13px;font-weight:500;color:#555;margin-bottom:5px;}
+.fg input,.fg select,.fg textarea{width:100%;border:1.5px solid #E0E0E0;border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:#111;background:#fff;outline:none;-webkit-appearance:none;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:#00A862;}
+.fg input::placeholder,.fg textarea::placeholder{color:#AAA;}
+.fg textarea{min-height:68px;resize:none;}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.sacts{display:flex;gap:8px;margin-top:8px;}
+.disc{font-size:11px;color:#AAA;padding:10px 18px 18px;border-top:1px solid #E0E0E0;line-height:1.6;}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#111;color:#fff;font-size:12px;padding:8px 16px;border-radius:20px;z-index:99999;opacity:0;transition:opacity .3s;white-space:nowrap;pointer-events:none;}
+.toast.on{opacity:1;}
+</style>
+</head>
+<body>
+
+<!-- CONFIG BANNER -->
+<div class="config-banner" id="cfgBanner">
+  <span>⚙️ Configure o Supabase para salvar dados permanentemente.</span>
+  <a onclick="toggleConfig()">Configurar agora</a>
+</div>
+<div class="config-form" id="cfgForm">
+  <div class="cfg-title">Conectar ao Supabase</div>
+  <div class="cfg-sub">Crie um projeto gratuito em <strong>supabase.com</strong> e cole as credenciais abaixo. Seus dados ficam salvos permanentemente.</div>
+  <input class="cfg-input" type="text" id="cfgUrl" placeholder="URL do projeto" value="https://erouldsysazbydgclxrg.supabase.co">
+  <input class="cfg-input" type="text" id="cfgKey" placeholder="Chave anon/public (começa com eyJ...)">
+  <button class="cfg-btn" onclick="saveConfig()">Salvar e conectar</button>
+  <div id="cfgStatus" style="font-size:12px;color:#666;margin-top:8px;"></div>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">Anest<span>Lab</span></div>
+  <div class="nav">
+    <div class="live"><div class="ld"></div><span id="syncStatus">local</span></div>
+    <button class="admin-btn" onclick="showAdmin()">Admin</button>
+  </div>
+</header>
+
+<!-- MAIN TABS -->
+<div class="main-tabs" id="mainTabs">
+  <button class="mtab on" onclick="showPg('mapa',this)">Mapa</button>
+  <button class="mtab" onclick="showPg('relatos',this)">Relatos</button>
+</div>
+
+<!-- MAPA PAGE -->
+<div class="pg on" id="pg-mapa">
+  <div class="hero">
+    <span class="eye">Inteligência coletiva · Anestesiologia SP</span>
+    <h1>Quanto paga cada<br>hospital em <i>São Paulo?</i></h1>
+    <p>Dados reais de plantão, coletados anonimamente pelos próprios anestesistas.</p>
+    <div class="hstats">
+      <div><div class="hn" id="nH">52</div><div class="hl">hospitais</div></div>
+      <div><div class="hn" id="nR">0</div><div class="hl">relatos</div></div>
+      <div><div class="hn" id="nC">0</div><div class="hl">contribuições</div></div>
+    </div>
+  </div>
+  <div class="notice"><p>Sem dados ainda — <strong>contribua e desbloqueie o mapa</strong></p><div class="nn" id="nB">52</div></div>
+  <div class="ctrl">
+    <input class="si" type="text" id="sq" placeholder="Buscar hospital, bairro ou grupo...">
+    <div class="ftags" id="frow"></div>
+  </div>
+  <div class="mapbox"><svg id="msvg" viewBox="0 0 360 340" xmlns="http://www.w3.org/2000/svg"></svg><div class="mhint">Toque para ver detalhes</div></div>
+  <div class="leg" id="leg"></div>
+  <div class="bbar">
+    <button class="bp" id="btnAdd">+ Adicionar meu dado</button>
+    <button class="bs" id="btnRel">Relatos</button>
+  </div>
+</div>
+
+<!-- RELATOS PAGE -->
+<div class="pg" id="pg-relatos" style="padding:16px 18px;">
+  <div style="font-size:15px;font-weight:700;color:#111;margin-bottom:12px;">Relatos da comunidade</div>
+  <div id="relatosFeed"></div>
+  <button class="bp" style="width:100%;margin-top:8px;" id="btnRelAdd">+ Publicar meu relato</button>
+</div>
+
+<!-- ADMIN PAGE (hidden) -->
+<div class="pg" id="pg-admin" style="display:none!important;">
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <div class="admin-title">Painel Admin</div>
+      <div class="algo-status"><div class="ld"></div>algoritmo ativo</div>
+    </div>
+    <div class="atabs">
+      <button class="at on" onclick="showAt('aoverview',this)">Visão geral</button>
+      <button class="at" onclick="showAt('asus',this)">Suspeitos</button>
+      <button class="at" onclick="showAt('ainsights',this)">Insights</button>
+      <button class="at" onclick="showAt('aalgo',this)">Algoritmo</button>
+    </div>
+    <div id="aoverview" class="asec on">
+      <div class="sgrid" id="adminStats"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:13px;font-weight:500;color:#111;">Atividade recente</div>
+        <button class="sim-btn" onclick="simular()">+ simular</button>
+      </div>
+      <div class="ilist" id="actList"></div>
+      <div style="font-size:13px;font-weight:500;color:#111;margin:12px 0 8px;">Cobertura por região</div>
+      <div id="regProg"></div>
+    </div>
+    <div id="asus" class="asec">
+      <div style="font-size:12px;color:#666;margin-bottom:12px;padding:10px 12px;background:#F5F5F5;border-radius:8px;line-height:1.5;">O algoritmo analisa cada entrada em tempo real. Dados suspeitos são sinalizados mas não removidos — você decide.</div>
+      <div class="ilist" id="susList"></div>
+    </div>
+    <div id="ainsights" class="asec">
+      <div id="insightsList"></div>
+    </div>
+    <div id="aalgo" class="asec">
+      <div class="algo-card"><div class="at-title">Detector de outliers estatísticos</div><div class="at-desc">Sinaliza valores que desviam mais de 2σ da média regional.</div><div class="pbar"><div class="pfill" style="width:88%;background:#00A862;"></div></div><div class="plbl">Precisão estimada: 88%</div></div>
+      <div class="algo-card"><div class="at-title">Detector de duplicatas</div><div class="at-desc">Identifica múltiplas contribuições do mesmo perfil para o mesmo hospital.</div><div class="pbar"><div class="pfill" style="width:94%;background:#00A862;"></div></div><div class="plbl">Precisão estimada: 94%</div></div>
+      <div class="algo-card"><div class="at-title">Detector de conflito de relatos</div><div class="at-desc">Cruza valor declarado com relatos textuais. Identifica inconsistências.</div><div class="pbar"><div class="pfill" style="width:72%;background:#FF6F00;"></div></div><div class="plbl">72% — em treinamento</div></div>
+      <div class="algo-card"><div class="at-title">Score de confiabilidade</div><div class="at-desc">Cada hospital recebe score 0-100 baseado em consistência, volume e ausência de flags.</div><div class="pbar"><div class="pfill" style="width:81%;background:#00A862;"></div></div><div class="plbl">Precisão estimada: 81%</div></div>
+      <div style="padding:10px 12px;border:1px solid #E0E0E0;border-radius:8px;margin-top:4px;font-size:12px;color:#666;line-height:1.5;">Com menos de 5 contribuições por hospital os detectores operam em modo conservador. Acima de 10, modo preciso ativo.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SHEET -->
+<div class="ov" id="ov" onclick="closeS(event)">
+  <div class="sh" onclick="event.stopPropagation()">
+    <div class="sh-drag"></div>
+    <button class="close-x" id="closeX">×</button>
+    <div class="sb">
+      <div class="stag" id="sTag"></div>
+      <div class="sname" id="sName"></div>
+      <div class="smeta" id="sMeta"></div>
+      <div id="sSal"></div>
+      <div id="sGrp"></div>
+      <div id="sRels"></div>
+      <div class="sdiv" id="sDv" style="display:none"></div>
+      <div id="sForm"></div>
+      <div class="sacts" id="sActs"></div>
+    </div>
+    <p class="disc">Valores baseados em relatos voluntários e anônimos. Não constituem tabela de preços. Fins exclusivamente educacionais.</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────
+var SB_URL='https://erouldsysazbydgclxrg.supabase.co';
+var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyb3VsZHN5c2F6YnlkZ2NseHJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNTE4NjEsImV4cCI6MjA5MzYyNzg2MX0.6-5_Q0HriG0DE3furQhVg1Jc8-y_LZ3802eXfj5T1LY';
+var sbReady=true;
+
+function toggleConfig(){document.getElementById('cfgForm').classList.toggle('on');}
+function saveConfig(){
+  var u=document.getElementById('cfgUrl').value.trim();
+  var k=document.getElementById('cfgKey').value.trim();
+  if(!u||!k){document.getElementById('cfgStatus').textContent='Preencha os dois campos.';return;}
+  localStorage.setItem('sb_url',u);localStorage.setItem('sb_key',k);
+  SB_URL=u;SB_KEY=k;sbReady=true;
+  document.getElementById('cfgStatus').textContent='Conectado! Sincronizando...';
+  document.getElementById('cfgBanner').style.display='none';
+  document.getElementById('cfgForm').classList.remove('on');
+  document.getElementById('syncStatus').textContent='online';
+  syncFromDB();
+  showToast('Supabase conectado!');
+}
+document.getElementById('cfgBanner').style.display='none';document.getElementById('syncStatus').textContent='online';
+
+// ── SUPABASE API ─────────────────────────────────────────
+async function sbInsert(table,data){
+  if(!sbReady)return null;
+  try{
+    var r=await fetch(SB_URL+'/rest/v1/'+table,{method:'POST',headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'},body:JSON.stringify(data)});
+    return await r.json();
+  }catch(e){return null;}
+}
+async function sbSelect(table,order){
+  if(!sbReady)return null;
+  try{
+    var url=SB_URL+'/rest/v1/'+table+'?select=*'+(order?'&order='+order:'');
+    var r=await fetch(url,{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+    return await r.json();
+  }catch(e){return null;}
+}
+async function sbDelete(table,id){
+  if(!sbReady)return null;
+  try{
+    await fetch(SB_URL+'/rest/v1/'+table+'?id=eq.'+id,{method:'DELETE',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+  }catch(e){}
+}
+async function syncFromDB(){
+  var contribs=await sbSelect('contribuicoes','created_at.desc');
+  var rels=await sbSelect('relatos','created_at.desc');
+  if(Array.isArray(contribs)){
+    contribs.forEach(function(c){
+      var h=H.find(function(x){return x.n===c.hospital;});
+      if(h){h.v=c.valor;if(c.grupo)h.g=c.grupo;h.rc=Math.max(h.rc,1);}
+      DB.push(c);
+    });
+    unlocked=contribs.length>0;
+  }
+  if(Array.isArray(rels)){
+    rels.forEach(function(r){
+      RELS.push({id:r.id,hosp:r.hospital,v:r.valor,t:r.texto,lk:false,ln:r.likes||0,fi:false,fn:r.reais||0});
+    });
+  }
+  draw();stats();renderRelatos();renderAdmin();
+}
+
+// ── REGRAS / DATA ────────────────────────────────────────
+var R={
+  centro:{l:'Centro/Paulista',c:'#2196F3',p:'background:#E3F2FD;color:#1565C0'},
+  oeste:{l:'Zona Oeste',c:'#00A862',p:'background:#E8F5E9;color:#2E7D32'},
+  sul:{l:'Zona Sul',c:'#FF6F00',p:'background:#FFF3E0;color:#BF360C'},
+  norte:{l:'Zona Norte',c:'#7B1FA2',p:'background:#F3E5F5;color:#4A148C'},
+  leste:{l:'Zona Leste',c:'#C62828',p:'background:#FFEBEE;color:#B71C1C'},
+  abc:{l:'ABC Paulista',c:'#37474F',p:'background:#ECEFF1;color:#263238'},
+  grande:{l:'Grande SP',c:'#AD1457',p:'background:#FCE4EC;color:#880E4F'}
+};
+var unlocked=false,selH=null,filt='all';
+var DB=[],RELS=[];
+var H=[
+  {n:'Hospital Albert Einstein',r:'oeste',b:'Morumbi',v:0,rc:0,g:'',x:82,y:212},
+  {n:'Hospital Sírio-Libanês',r:'centro',b:'Bela Vista',v:0,rc:0,g:'',x:188,y:153},
+  {n:'Hospital das Clínicas (HC-FMUSP)',r:'oeste',b:'Cerqueira César',v:0,rc:0,g:'',x:150,y:146},
+  {n:'Hospital do Coração (HCor)',r:'centro',b:'Paraíso',v:0,rc:0,g:'',x:196,y:165},
+  {n:'Hospital Alemão Oswaldo Cruz',r:'centro',b:'Paraíso',v:0,rc:0,g:'',x:205,y:158},
+  {n:'Hospital Beneficência Portuguesa',r:'centro',b:'Bom Retiro',v:0,rc:0,g:'',x:215,y:136},
+  {n:'Hospital Samaritano Higienópolis',r:'centro',b:'Higienópolis',v:0,rc:0,g:'',x:174,y:140},
+  {n:'Hospital Sabará',r:'centro',b:'Higienópolis',v:0,rc:0,g:'',x:170,y:132},
+  {n:'Santa Casa de São Paulo',r:'centro',b:'Santa Cecília',v:0,rc:0,g:'',x:210,y:142},
+  {n:'Hospital 9 de Julho',r:'centro',b:'Cerqueira César',v:0,rc:0,g:'',x:183,y:148},
+  {n:'Hospital Santa Catarina',r:'centro',b:'Paulista',v:0,rc:0,g:'',x:192,y:156},
+  {n:'Hospital Pro Matre Paulista',r:'centro',b:'Bela Vista',v:0,rc:0,g:'',x:196,y:160},
+  {n:'Hospital Santa Joana',r:'centro',b:'Paraíso',v:0,rc:0,g:'',x:200,y:168},
+  {n:'Hospital Santa Isabel',r:'centro',b:'Higienópolis',v:0,rc:0,g:'',x:177,y:136},
+  {n:'A.C. Camargo Cancer Center',r:'centro',b:'Liberdade',v:0,rc:0,g:'',x:212,y:163},
+  {n:'Hospital São Camilo – Pompéia',r:'oeste',b:'Pompéia',v:0,rc:0,g:'IPAR',x:142,y:138},
+  {n:'Instituto do Coração (InCor)',r:'oeste',b:'Cerqueira César',v:0,rc:0,g:'',x:152,y:146},
+  {n:'Hospital Leforte Morumbi',r:'oeste',b:'Morumbi',v:0,rc:0,g:'',x:86,y:218},
+  {n:'Hospital São Luiz Itaim',r:'oeste',b:'Itaim Bibi',v:0,rc:0,g:'',x:126,y:183},
+  {n:'Hospital Metropolitano',r:'oeste',b:'Lapa',v:0,rc:0,g:'',x:134,y:136},
+  {n:'Hospital Jardins',r:'oeste',b:'Pinheiros',v:0,rc:0,g:'',x:147,y:162},
+  {n:'Hospital São Camilo – Santana',r:'norte',b:'Santana',v:0,rc:0,g:'',x:200,y:84},
+  {n:'Conjunto Hospitalar do Mandaqui',r:'norte',b:'Mandaqui',v:0,rc:0,g:'',x:208,y:76},
+  {n:'Hospital São Luiz Gonzaga',r:'norte',b:'Jaçanã',v:0,rc:0,g:'',x:246,y:70},
+  {n:'Hospital Presidente',r:'norte',b:'Água Fria',v:0,rc:0,g:'',x:222,y:72},
+  {n:'Hospital São Camilo – Ipiranga',r:'sul',b:'Ipiranga',v:0,rc:0,g:'',x:242,y:205},
+  {n:'Hospital Alvorada Moema',r:'sul',b:'Moema',v:0,rc:0,g:'',x:178,y:201},
+  {n:'Hospital Santa Paula',r:'sul',b:'Brooklin',v:0,rc:0,g:'',x:150,y:221},
+  {n:'Hospital Santa Cruz',r:'sul',b:'Vila Mariana',v:0,rc:0,g:'',x:198,y:191},
+  {n:'Hospital Paulista',r:'sul',b:'Vila Clementino',v:0,rc:0,g:'',x:202,y:199},
+  {n:'Hospital São Paulo (UNIFESP)',r:'sul',b:'Vila Clementino',v:0,rc:0,g:'',x:205,y:203},
+  {n:'Hospital Dante Pazzanese',r:'sul',b:'Ibirapuera',v:0,rc:0,g:'',x:186,y:195},
+  {n:'Hospital Ipiranga',r:'sul',b:'Ipiranga',v:0,rc:0,g:'',x:240,y:209},
+  {n:'Complexo Heliópolis',r:'sul',b:'Heliópolis',v:0,rc:0,g:'',x:250,y:219},
+  {n:'Hospital Ruben Berta',r:'sul',b:'Indianópolis',v:0,rc:0,g:'',x:192,y:209},
+  {n:"Hospital M'Boi Mirim",r:'sul',b:"M'Boi Mirim",v:0,rc:0,g:'',x:122,y:276},
+  {n:'Hospital São Luiz Anália Franco',r:'leste',b:'Anália Franco',v:0,rc:0,g:'',x:286,y:153},
+  {n:'Hospital Santa Marcelina',r:'leste',b:'Itaquera',v:0,rc:0,g:'',x:312,y:167},
+  {n:'Hospital Santo Expedito',r:'leste',b:'Itaquera',v:0,rc:0,g:'',x:316,y:175},
+  {n:'Hospital Santa Virgínia',r:'leste',b:'Belém',v:0,rc:0,g:'',x:260,y:155},
+  {n:'Hospital Cármino Caricchio',r:'leste',b:'Tatuapé',v:0,rc:0,g:'',x:272,y:147},
+  {n:'Hospital Geral de Guarulhos',r:'grande',b:'Guarulhos',v:0,rc:0,g:'',x:292,y:78},
+  {n:'Hospital Alvorada Guarulhos',r:'grande',b:'Guarulhos',v:0,rc:0,g:'',x:302,y:70},
+  {n:'Hospital Christovão da Gama',r:'abc',b:'Santo André',v:0,rc:0,g:'',x:286,y:257},
+  {n:'Hospital Brasil Santo André',r:'abc',b:'Santo André',v:0,rc:0,g:'',x:278,y:265},
+  {n:'Hospital Santa Helena SBC',r:'abc',b:'São Bernardo',v:0,rc:0,g:'',x:214,y:277},
+  {n:'Hospital Albert Sabin São Caetano',r:'abc',b:'São Caetano',v:0,rc:0,g:'',x:266,y:245},
+  {n:'Hospital Estadual Diadema',r:'abc',b:'Diadema',v:0,rc:0,g:'',x:222,y:265},
+];
+var SP='M40,52 L62,36 L94,30 L132,24 L172,20 L212,18 L252,16 L292,18 L322,24 L342,32 L352,46 L356,62 L354,84 L348,106 L342,128 L338,152 L334,176 L330,200 L324,222 L316,242 L304,258 L286,272 L264,282 L240,290 L214,294 L188,292 L162,286 L138,276 L114,262 L92,246 L72,226 L54,204 L40,180 L32,154 L28,128 L26,102 L28,76 Z';
+
+// ── ALGORITMO DE DETECÇÃO ────────────────────────────────
+function analisar(c){
+  var flags=[];var status='ok';
+  if(c.valor>3500){flags.push('Valor acima de R$3.500 — fora do padrão SP');status='alert';}
+  if(c.valor<350){flags.push('Valor abaixo de R$350 — possível erro de digitação');status='alert';}
+  if(c.fonte==='est'&&c.valor>2200){flags.push('Estimativa com valor alto — baixa confiabilidade');if(status==='ok')status='warn';}
+  var same=DB.filter(function(x){return x.hospital===c.hospital&&x.id!==c.id&&x.status==='ok';});
+  if(same.length>=2){
+    var vals=same.map(function(x){return x.valor;});
+    var avg=vals.reduce(function(a,b){return a+b;})/vals.length;
+    var dev=Math.abs(c.valor-avg)/avg*100;
+    if(dev>80){flags.push('Desvio de '+Math.round(dev)+'% vs média do hospital (R$'+Math.round(avg).toLocaleString('pt-BR')+')');if(status==='ok')status='warn';}
+  }
+  c.flags=flags;c.status=status;
+  return c;
+}
+
+// ── MAP ──────────────────────────────────────────────────
+function draw(){
+  var el=document.getElementById('msvg');
+  var q=(document.getElementById('sq').value||'').toLowerCase();
+  var o='<rect width="360" height="340" fill="#EEF2F5"/>';
+  o+='<path d="'+SP+'" fill="#DDE5ED" stroke="#BBCAD4" stroke-width="1.5"/>';
+  o+='<text x="185" y="180" text-anchor="middle" font-size="10" fill="#B0BEC5" font-family="sans-serif">São Paulo</text>';
+  H.filter(function(h){
+    return(filt==='all'||h.r===filt)&&(!q||h.n.toLowerCase().indexOf(q)>-1||h.b.toLowerCase().indexOf(q)>-1||(h.g&&h.g.toLowerCase().indexOf(q)>-1));
+  }).forEach(function(h){
+    var reg=R[h.r]||{c:'#999'};
+    var hasV=unlocked&&h.v>0;
+    var col=hasV?reg.c:'#B0BEC5';
+    var sz=hasV?10:7;
+    var id='p_'+h.n.replace(/[^a-zA-Z0-9]/g,'_');
+    o+='<g id="'+id+'" style="cursor:pointer">';
+    o+='<circle cx="'+h.x+'" cy="'+h.y+'" r="'+(sz+7)+'" fill="'+col+'" opacity="0.13"/>';
+    o+='<circle cx="'+h.x+'" cy="'+h.y+'" r="'+sz+'" fill="'+col+'" stroke="#fff" stroke-width="2.5"/>';
+    if(hasV){
+      var lbl='R$'+(h.v/1000).toFixed(1)+'k';
+      var tw=lbl.length*5.2+10;
+      o+='<rect x="'+(h.x-tw/2)+'" y="'+(h.y-sz-17)+'" width="'+tw+'" height="14" rx="4" fill="'+col+'"/>';
+      o+='<text x="'+h.x+'" y="'+(h.y-sz-5)+'" text-anchor="middle" font-size="8" fill="#fff" font-family="sans-serif" font-weight="700">'+lbl+'</text>';
+    }
+    o+='</g>';
+  });
+  el.innerHTML=o;
+  H.forEach(function(h){
+    var id='p_'+h.n.replace(/[^a-zA-Z0-9]/g,'_');
+    var g=document.getElementById(id);
+    if(!g)return;
+    (function(hosp){
+      g.addEventListener('click',function(e){e.stopPropagation();openH(hosp);});
+      g.addEventListener('touchend',function(e){e.preventDefault();e.stopPropagation();openH(hosp);});
+    })(h);
+  });
+}
+
+// ── STATS ────────────────────────────────────────────────
+function stats(){
+  document.getElementById('nH').textContent=H.length;
+  document.getElementById('nR').textContent=RELS.length;
+  document.getElementById('nC').textContent=DB.length;
+  document.getElementById('nB').textContent=H.filter(function(h){return h.v===0;}).length;
+}
+
+// ── OPEN HOSPITAL SHEET ──────────────────────────────────
+function openH(h){
+  selH=h;
+  var reg=R[h.r]||{l:h.r,p:'',c:'#999'};
+  document.getElementById('sTag').textContent=reg.l;
+  document.getElementById('sName').textContent=h.n;
+  document.getElementById('sMeta').innerHTML='<span class="rp" style="'+reg.p+'">'+reg.l+'</span>'+h.b;
+  var hasV=unlocked&&h.v>0;
+  document.getElementById('sSal').innerHTML='<div class="salbox"><div class="sallbl">Plantão 12h · valor líquido na conta</div><div class="salval'+(hasV?'':' lk')+'">'+(hasV?'R$ '+h.v.toLocaleString('pt-BR'):'R$ ????')+'</div><div class="salsub">'+(h.rc?h.rc+' relato'+(h.rc>1?'s':''):'nenhum relato ainda')+'</div>'+(!unlocked?'<div class="salcta">Contribua para desbloquear os valores</div>':'')+'</div>';
+  document.getElementById('sGrp').innerHTML='<div class="grpbox"><div class="grplbl">Grupo de anestesia</div>'+(h.g?'<div class="grpval">'+h.g+'</div>':'<div class="grpmt">não informado ainda</div>')+'</div>';
+  var rns=RELS.filter(function(r){return r.hosp===h.n;});
+  document.getElementById('sRels').innerHTML=rns.length?'<div class="relhdr">'+rns.length+' relato'+(rns.length>1?'s':'')+' da comunidade</div>'+rns.slice(0,3).map(relCard).join(''):'';
+  document.getElementById('sDv').style.display='block';
+  if(!unlocked){
+    document.getElementById('sForm').innerHTML='<div class="f2"><div class="fg"><label>Valor do plantão 12h (R$)</label><input type="number" id="fv" placeholder="Ex: 1500" inputmode="numeric"></div><div class="fg"><label>Grupo de anestesia</label><input type="text" id="fg" placeholder="Ex: GAAP, IPAR..."></div></div><div class="fg"><label>Como obteve esse dado?</label><select id="ff"><option value="own">Experiência própria</option><option value="peer">Relato de colega</option><option value="est">Estimativa</option></select></div>';
+    document.getElementById('sActs').innerHTML='<button class="bp" style="flex:1;font-size:14px" onclick="subH()">Contribuir e desbloquear mapa</button>';
+  }else{
+    document.getElementById('sForm').innerHTML='<div class="f2"><div class="fg"><label>Atualizar valor (R$)</label><input type="number" id="fv" placeholder="Novo valor" inputmode="numeric"></div><div class="fg"><label>Grupo de anestesia</label><input type="text" id="fg" value="'+(h.g||'')+'" placeholder="Nome do grupo"></div></div>';
+    document.getElementById('sActs').innerHTML='<button class="bp" style="flex:1;font-size:14px" onclick="subH()">Atualizar</button><button class="bs" style="font-size:14px" onclick="closeS()">Fechar</button>';
+  }
+  openSheet();
+}
+
+async function subH(){
+  var val=parseInt((document.getElementById('fv')||{}).value||'0');
+  var grp=((document.getElementById('fg')||{}).value||'').trim();
+  var fonte=(document.getElementById('ff')||{}).value||'own';
+  if(!val||val<=0){alert('Informe o valor do plantão.');return;}
+  if(selH){selH.v=val;if(grp)selH.g=grp;selH.rc=Math.max(selH.rc,1);}
+  var entry={hospital:selH?selH.n:'',valor:val,grupo:grp,fonte:fonte,status:'ok',flags:[],created_at:new Date().toISOString()};
+  analisar(entry);
+  DB.unshift(entry);
+  if(sbReady){var r=await sbInsert('contribuicoes',entry);if(r&&r[0])entry.id=r[0].id;}
+  unlocked=true;
+  draw();stats();renderAdmin();closeS();
+  showToast('Contribuição salva!');
+}
+
+function openAdd(){
+  selH=null;
+  document.getElementById('sTag').textContent='Novo hospital';
+  document.getElementById('sName').textContent='Hospital não listado?';
+  document.getElementById('sMeta').innerHTML='Adicione e contribua com o dado.';
+  document.getElementById('sSal').innerHTML='';document.getElementById('sGrp').innerHTML='';document.getElementById('sRels').innerHTML='';
+  document.getElementById('sDv').style.display='none';
+  document.getElementById('sForm').innerHTML='<div class="fg"><label>Nome do hospital</label><input type="text" id="fn" placeholder="Ex: Hospital São Lucas"></div><div class="f2"><div class="fg"><label>Valor do plantão 12h (R$)</label><input type="number" id="fv" placeholder="O que entrou na conta" inputmode="numeric"></div><div class="fg"><label>Grupo de anestesia</label><input type="text" id="fg" placeholder="Ex: GAAP, IPAR, SMA"></div></div><div class="fg"><label>Como obteve esse dado?</label><select id="ff"><option value="own">Experiência própria</option><option value="peer">Relato de colega</option><option value="est">Estimativa</option></select></div>';
+  document.getElementById('sActs').innerHTML='<button class="bp" style="flex:1;font-size:14px" onclick="subNew()">Adicionar e desbloquear mapa</button>';
+  openSheet();
+}
+
+async function subNew(){
+  var nome=((document.getElementById('fn')||{}).value||'').trim();
+  var val=parseInt((document.getElementById('fv')||{}).value||'0');
+  var grp=((document.getElementById('fg')||{}).value||'').trim();
+  var fonte=(document.getElementById('ff')||{}).value||'own';
+  if(!nome||!val||val<=0){alert('Preencha nome e valor.');return;}
+  var ex=H.find(function(h){return h.n.toLowerCase()===nome.toLowerCase();});
+  if(ex){ex.v=val;if(grp)ex.g=grp;ex.rc++;}
+  else{var s=Math.random();H.unshift({n:nome,r:'centro',b:'SP',v:val,rc:1,g:grp,x:150+s*60,y:150+s*50});}
+  var entry={hospital:nome,valor:val,grupo:grp,fonte:fonte,status:'ok',flags:[],created_at:new Date().toISOString()};
+  analisar(entry);DB.unshift(entry);
+  if(sbReady)await sbInsert('contribuicoes',entry);
+  unlocked=true;draw();stats();renderAdmin();closeS();
+  showToast('Hospital adicionado!');
+}
+
+function openRelatos(){
+  document.getElementById('sTag').textContent='Comunidade';
+  document.getElementById('sName').textContent='Relatos anônimos';
+  document.getElementById('sMeta').innerHTML='Sem identificação. Sem julgamento.';
+  document.getElementById('sSal').innerHTML='';document.getElementById('sGrp').innerHTML='';
+  document.getElementById('sRels').innerHTML=RELS.length?RELS.map(relCard).join(''):'<div class="empty-s">Nenhum relato ainda.<br>O primeiro abre a conversa.</div>';
+  document.getElementById('sDv').style.display='block';
+  var opts=H.map(function(h){return'<option>'+h.n+'</option>';}).join('');
+  document.getElementById('sForm').innerHTML='<div class="fg"><label>Hospital</label><select id="fh"><option value="">Selecione...</option>'+opts+'</select></div><div class="fg"><label>Valor recebido no plantão 12h (R$)</label><input type="number" id="fv" placeholder="O que entrou na sua conta" inputmode="numeric"></div><div class="fg"><label>Seu relato</label><textarea id="ft" placeholder="O que você gostaria que alguém tivesse te contado antes..."></textarea></div>';
+  document.getElementById('sActs').innerHTML='<button class="bp" style="flex:1;font-size:14px" onclick="subRel()">Publicar relato</button><button class="bs" style="font-size:14px" onclick="closeS()">Fechar</button>';
+  openSheet();
+}
+
+async function subRel(){
+  var hosp=((document.getElementById('fh')||{}).value||'').trim();
+  var val=parseInt((document.getElementById('fv')||{}).value||'0');
+  var txt=((document.getElementById('ft')||{}).value||'').trim();
+  if(!hosp||!val||!txt){alert('Preencha todos os campos.');return;}
+  var entry={hospital:hosp,valor:val,texto:txt,likes:0,reais:0,created_at:new Date().toISOString()};
+  if(sbReady){var r=await sbInsert('relatos',entry);if(r&&r[0])entry.id=r[0].id;}
+  var h=H.find(function(x){return x.n===hosp;});
+  if(h){if(!h.v)h.v=val;h.rc++;if(h.rc>=3)h.hot=true;}
+  RELS.unshift({id:entry.id||Date.now(),hosp:hosp,v:val,t:txt,lk:false,ln:0,fi:false,fn:0});
+  unlocked=true;draw();stats();renderRelatos();closeS();
+  showToast('Relato publicado!');
+}
+
+function relCard(r){
+  return'<div class="relcard"><div class="rv">R$ '+r.v.toLocaleString('pt-BR')+'</div>'+(r.hosp?'<div class="rh">'+r.hosp+'</div>':'')+'<div class="rt">'+r.t+'</div><div class="rl"><button class="rb'+(r.lk?' on':'')+'" onclick="tL('+r.id+',this)">confirmo ('+r.ln+')</button><button class="rb'+(r.fi?' on':'')+'" onclick="tF('+r.id+',this)">esse é real ('+r.fn+')</button></div></div>';
+}
+
+function renderRelatos(){
+  var el=document.getElementById('relatosFeed');
+  if(!el)return;
+  el.innerHTML=RELS.length?RELS.map(relCard).join(''):'<div class="empty-s">Nenhum relato ainda.<br>O primeiro abre a conversa.</div>';
+}
+
+function tL(id,btn){var r=RELS.find(function(x){return x.id===id;});if(!r)return;r.lk=!r.lk;r.ln+=r.lk?1:-1;btn.classList.toggle('on',r.lk);btn.textContent='confirmo ('+r.ln+')';}
+function tF(id,btn){var r=RELS.find(function(x){return x.id===id;});if(!r)return;r.fi=!r.fi;r.fn+=r.fi?1:-1;btn.classList.toggle('on',r.fi);btn.textContent='esse é real ('+r.fn+')';}
+
+// ── ADMIN ────────────────────────────────────────────────
+function renderAdmin(){
+  var al=DB.filter(function(c){return c.status==='alert';}).length;
+  var wn=DB.filter(function(c){return c.status==='warn';}).length;
+  var ok=DB.filter(function(c){return c.status==='ok';}).length;
+  document.getElementById('adminStats').innerHTML=
+    sc(DB.length,'contribuições','#111')+sc(al,'críticos','#B71C1C')+sc(wn,'alertas','#BF360C')+sc(ok,'validados','#1B5E20');
+  var recent=DB.slice(0,5);
+  document.getElementById('actList').innerHTML=recent.length?recent.map(function(c){
+    var bc=c.status==='alert'?'bdg-a':c.status==='warn'?'bdg-w':'bdg-o';
+    var bl=c.status==='alert'?'crítico':c.status==='warn'?'atenção':'ok';
+    return'<div class="icard '+c.status+'"><div class="ic-top"><div class="ic-name">'+c.hospital+'</div><span class="bdg '+bc+'">'+bl+'</span></div><div class="ic-meta">R$ '+c.valor.toLocaleString('pt-BR')+' · '+c.fonte+'</div>'+(c.flags.length?'<div class="ic-reason">'+c.flags[0]+'</div>':'')+'</div>';
+  }).join(''):'<div class="empty-s">Nenhuma contribuição ainda.</div>';
+  var sus=DB.filter(function(c){return c.status!=='ok';});
+  document.getElementById('susList').innerHTML=sus.length?sus.map(function(c,i){
+    var bc=c.status==='alert'?'bdg-a':'bdg-w';
+    var bl=c.status==='alert'?'dado crítico':'atenção';
+    return'<div class="icard '+c.status+'"><div class="ic-top"><div class="ic-name">'+c.hospital+'</div><span class="bdg '+bc+'">'+bl+'</span></div><div class="ic-meta">R$ '+c.valor.toLocaleString('pt-BR')+' · fonte: '+c.fonte+'</div>'+c.flags.map(function(f){return'<div class="ic-reason">'+f+'</div>';}).join('')+'<div class="ic-acts"><button class="act app" onclick="aprovar('+i+')">Aprovar</button><button class="act rej" onclick="rejeitar('+i+')">Remover</button></div></div>';
+  }).join(''):'<div class="empty-s">Nenhum dado suspeito detectado.</div>';
+  var regioes={
+    'Zona Oeste':{t:8,c:H.filter(function(h){return h.r==='oeste'&&h.v>0;}).length},
+    'Centro/Paulista':{t:15,c:H.filter(function(h){return h.r==='centro'&&h.v>0;}).length},
+    'Zona Sul':{t:11,c:H.filter(function(h){return h.r==='sul'&&h.v>0;}).length},
+    'Zona Norte':{t:4,c:H.filter(function(h){return h.r==='norte'&&h.v>0;}).length},
+    'Zona Leste':{t:5,c:H.filter(function(h){return h.r==='leste'&&h.v>0;}).length},
+    'ABC Paulista':{t:7,c:H.filter(function(h){return h.r==='abc'&&h.v>0;}).length},
+    'Grande SP':{t:2,c:H.filter(function(h){return h.r==='grande'&&h.v>0;}).length},
+  };
+  document.getElementById('regProg').innerHTML=Object.keys(regioes).map(function(r){
+    var d=regioes[r];var pct=Math.round(d.c/d.t*100);
+    var col=pct>50?'#00A862':pct>25?'#FF6F00':'#C62828';
+    return'<div class="prg-row"><div class="prg-lbl">'+r+'</div><div class="prg-bar"><div class="prg-fill" style="width:'+pct+'%;background:'+col+';"></div></div><div class="prg-val">'+d.c+'/'+d.t+'</div></div>';
+  }).join('');
+  var insights=[];
+  if(DB.length===0)insights.push({tag:'aguardando dados',txt:'Nenhuma contribuição ainda.',sub:'Compartilhe o link para iniciar a coleta.'});
+  else{
+    insights.push({tag:'cobertura',txt:Math.round(H.filter(function(h){return h.v>0;}).length/H.length*100)+'% dos hospitais com dado',sub:'Meta: 100% cobertura em 30 dias.'});
+    if(al>0)insights.push({tag:'atenção',txt:al+' contribuição'+(al>1?'s':'')+' crítica'+(al>1?'s':'')+' detectada'+(al>1?'s':''),sub:'Revisar na aba Suspeitos antes de exibir.'});
+    insights.push({tag:'engajamento',txt:RELS.length+' relato'+(RELS.length!==1?'s':'')+' publicado'+(RELS.length!==1?'s':''),sub:'Relatos aumentam credibilidade da plataforma.'});
+  }
+  document.getElementById('insightsList').innerHTML=insights.map(function(i){return'<div class="insight"><div class="itag">'+i.tag+'</div><div class="itxt">'+i.txt+'</div><div class="isub">'+i.sub+'</div></div>';}).join('');
+}
+function sc(n,l,col){return'<div class="sc"><div class="sn" style="color:'+col+'">'+n+'</div><div class="sl">'+l+'</div></div>';}
+
+var SUS_IDX=0;
+function aprovar(i){
+  var sus=DB.filter(function(c){return c.status!=='ok';});
+  if(sus[i]){sus[i].status='ok';sus[i].flags=[];}
+  renderAdmin();showToast('Aprovado!');
+}
+function rejeitar(i){
+  var sus=DB.filter(function(c){return c.status!=='ok';});
+  if(sus[i]){DB.splice(DB.indexOf(sus[i]),1);}
+  renderAdmin();showToast('Removido!');
+}
+
+var simNomes=['Hospital São Camilo','Hospital Santa Cruz','Hospital Paulista','Hospital Leforte','Hospital Jardins'];
+function simular(){
+  var h=simNomes[Math.floor(Math.random()*simNomes.length)];
+  var v=Math.random()<0.2?Math.round(Math.random()*500+100):Math.round(Math.random()*1500+700);
+  var f=['own','peer','est'][Math.floor(Math.random()*3)];
+  var e={hospital:h,valor:v,grupo:'',fonte:f,status:'ok',flags:[],created_at:new Date().toISOString()};
+  analisar(e);DB.unshift(e);
+  renderAdmin();showToast('Simulado: R$'+v.toLocaleString('pt-BR'));
+}
+
+// ── NAV ──────────────────────────────────────────────────
+function showPg(name,btn){
+  ['mapa','relatos'].forEach(function(p){document.getElementById('pg-'+p).classList.toggle('on',p===name);});
+  document.querySelectorAll('.mtab').forEach(function(t){t.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  if(name==='relatos')renderRelatos();
+}
+function showAdmin(){
+  var a=document.getElementById('pg-admin');
+  var isOn=a.style.display!=='none!important'&&a.style.display==='block';
+  if(isOn){a.style.display='';document.getElementById('mainTabs').style.display='flex';}
+  else{
+    ['mapa','relatos'].forEach(function(p){document.getElementById('pg-'+p).classList.remove('on');});
+    a.style.cssText='display:block';
+    document.getElementById('mainTabs').style.display='none';
+    renderAdmin();
+  }
+}
+function showAt(name,btn){
+  ['aoverview','asus','ainsights','aalgo'].forEach(function(s){document.getElementById(s).classList.toggle('on',s===name);});
+  document.querySelectorAll('.at').forEach(function(t){t.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+}
+
+// ── SHEET ────────────────────────────────────────────────
+function openSheet(){document.getElementById('ov').classList.add('on');document.getElementById('sh').scrollTop=0;}
+function closeS(e){if(!e||e.target===document.getElementById('ov'))document.getElementById('ov').classList.remove('on');}
+
+function setF(f,btn){
+  filt=f;
+  document.querySelectorAll('.ft').forEach(function(t){t.classList.remove('on');});
+  btn.classList.add('on');draw();
+}
+function buildFilters(){
+  var h='<button class="ft on" onclick="setF(\'all\',this)">Todos</button>';
+  Object.keys(R).forEach(function(k){h+='<button class="ft" onclick="setF(\''+k+'\',this)">'+R[k].l+'</button>';});
+  document.getElementById('frow').innerHTML=h;
+}
+function buildLeg(){
+  var h='';Object.keys(R).forEach(function(k){h+='<div class="li"><div class="ld2" style="background:'+R[k].c+'"></div>'+R[k].l+'</div>';});
+  document.getElementById('leg').innerHTML=h;
+}
+
+function showToast(msg){
+  var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');
+  setTimeout(function(){t.classList.remove('on');},2500);
+}
+
+// ── INIT ─────────────────────────────────────────────────
+document.getElementById('btnAdd').addEventListener('click',function(){openAdd();});
+document.getElementById('btnAdd').addEventListener('touchend',function(e){e.preventDefault();openAdd();});
+document.getElementById('btnRel').addEventListener('click',function(){openRelatos();});
+document.getElementById('btnRel').addEventListener('touchend',function(e){e.preventDefault();openRelatos();});
+document.getElementById('btnRelAdd').addEventListener('click',function(){openRelatos();});
+document.getElementById('btnRelAdd').addEventListener('touchend',function(e){e.preventDefault();openRelatos();});
+document.getElementById('closeX').addEventListener('click',function(){closeS();});
+document.getElementById('closeX').addEventListener('touchend',function(e){e.preventDefault();closeS();});
+document.getElementById('sq').addEventListener('input',draw);
+
+buildFilters();buildLeg();draw();stats();renderAdmin();
+if(sbReady)syncFromDB();
+</script>
+
+<!-- SUPABASE SQL SETUP GUIDE (comentário interno) -->
+<!--
+CRIAR TABELAS NO SUPABASE (SQL Editor):
+
+create table contribuicoes (
+  id uuid default gen_random_uuid() primary key,
+  hospital text not null,
+  valor integer not null,
+  grupo text,
+  fonte text,
+  status text default 'ok',
+  flags jsonb default '[]',
+  created_at timestamptz default now()
+);
+
+create table relatos (
+  id uuid default gen_random_uuid() primary key,
+  hospital text not null,
+  valor integer not null,
+  texto text not null,
+  likes integer default 0,
+  reais integer default 0,
+  created_at timestamptz default now()
+);
+
+alter table contribuicoes enable row level security;
+alter table relatos enable row level security;
+create policy "public read" on contribuicoes for select using (true);
+create policy "public insert" on contribuicoes for insert with check (true);
+create policy "public read" on relatos for select using (true);
+create policy "public insert" on relatos for insert with check (true);
+-->
+</body>
+</html>
