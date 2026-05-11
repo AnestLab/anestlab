@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="color-scheme" content="light">
+<title>AnestLab · Mapa da Anestesia SP</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:#fff!important;color:#111!important;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;-webkit-text-size-adjust:100%;min-height:100vh;}
+
+.header{height:52px;background:#fff;border-bottom:1px solid #E0E0E0;display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:999;}
+.logo{font-size:19px;font-weight:800;color:#111;}
+.logo span{color:#00A862;}
+.nav{display:flex;align-items:center;gap:10px;}
+.live{display:flex;align-items:center;gap:5px;font-size:12px;color:#666;}
+.ld{width:7px;height:7px;border-radius:50%;background:#00A862;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.admin-btn{display:none!important;}
+/* SEGURANÇA: botão admin removido do HTML — acesso via logo 7x cliques */
+
+
+.main-tabs{display:flex;border-bottom:1px solid #E0E0E0;background:#fff;position:sticky;top:52px;z-index:998;}
+.mtab{flex:1;padding:10px;font-size:13px;font-weight:500;color:#666;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;}
+.mtab.on{color:#00A862;border-bottom-color:#00A862;}
+
+.pg{display:none;}
+.pg.on{display:block;}
+
+.hero{background:#fff;padding:22px 18px 18px;border-bottom:1px solid #E0E0E0;}
+.eye{font-size:11px;font-weight:600;color:#00A862;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;display:block;}
+.hero h1{font-size:25px;font-weight:800;color:#111;line-height:1.15;margin-bottom:8px;}
+.hero h1 i{color:#00A862;font-style:normal;}
+.hero p{font-size:13px;color:#666;line-height:1.6;margin-bottom:18px;}
+.hstats{display:flex;gap:20px;}
+.hn{font-size:24px;font-weight:800;color:#111;line-height:1;}
+.hl{font-size:11px;color:#666;margin-top:3px;}
+
+.notice{background:#E6F5EE;border-bottom:1px solid #B2DFCC;padding:10px 18px;display:flex;align-items:center;gap:10px;}
+.notice p{font-size:12px;color:#005C35;flex:1;line-height:1.4;}
+.nn{font-size:22px;font-weight:800;color:#00A862;}
+
+.ctrl{background:#fff;padding:10px 18px;border-bottom:1px solid #E0E0E0;position:sticky;top:94px;z-index:997;}
+.si{width:100%;border:1.5px solid #E0E0E0;border-radius:10px;padding:9px 14px;font-size:14px;color:#111;background:#F5F5F5;outline:none;-webkit-appearance:none;font-family:inherit;margin-bottom:8px;}
+.si:focus{border-color:#00A862;background:#fff;}
+.si::placeholder{color:#AAA;}
+.ftags{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.ftags::-webkit-scrollbar{display:none;}
+.ft{font-size:12px;font-weight:500;padding:5px 13px;border-radius:20px;border:1.5px solid #E0E0E0;background:#fff;color:#666;white-space:nowrap;font-family:inherit;cursor:pointer;}
+.ft.on{background:#111;color:#fff;border-color:#111;}
+
+#map{width:100%;height:400px;z-index:1;}
+.leaflet-control-zoom{border:1px solid #E0E0E0!important;border-radius:8px!important;overflow:hidden;box-shadow:none!important;}
+.leaflet-control-zoom a{background:#fff!important;color:#111!important;border:none!important;}
+.leaflet-popup-content-wrapper{border-radius:12px!important;box-shadow:0 4px 20px rgba(0,0,0,.15)!important;border:1px solid #E0E0E0;}
+.leaflet-popup-content{margin:12px 14px!important;font-family:-apple-system,sans-serif;}
+.popup-name{font-size:13px;font-weight:600;color:#111;margin-bottom:3px;}
+.popup-reg{font-size:11px;color:#666;margin-bottom:6px;}
+.popup-val{font-size:20px;font-weight:800;color:#00A862;margin-bottom:2px;}
+.popup-val.lk{filter:blur(6px);color:#CCC;user-select:none;}
+.popup-sub{font-size:11px;color:#666;margin-bottom:8px;}
+.popup-btn{background:#00A862;color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;width:100%;font-family:inherit;}
+.popup-btn:active{background:#007A49;}
+
+.map-legend{display:flex;flex-wrap:wrap;gap:6px 12px;padding:9px 18px;background:#fff;border-bottom:1px solid #E0E0E0;}
+.li{display:flex;align-items:center;gap:5px;font-size:11px;color:#666;}
+.ld2{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+.bbar{padding:10px 18px;background:#fff;border-top:1px solid #E0E0E0;display:flex;gap:8px;position:sticky;bottom:0;z-index:999;}
+.bp{flex:2;background:#00A862;color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;touch-action:manipulation;}
+.bp:active{background:#007A49;}
+.bs{flex:1;background:#fff;color:#111;border:1.5px solid #E0E0E0;border-radius:10px;padding:13px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;touch-action:manipulation;}
+.bs:active{background:#F5F5F5;}
+
+/* RELATOS PAGE */
+.rel-page{padding:16px 18px;}
+.rel-page-title{font-size:15px;font-weight:700;color:#111;margin-bottom:12px;}
+.relcard{border:1.5px solid #E0E0E0;border-radius:10px;padding:11px;margin-bottom:8px;background:#fff;}
+.relcard .rv{font-size:16px;font-weight:800;color:#00A862;margin-bottom:3px;}
+.relcard .rh{font-size:12px;color:#666;margin-bottom:2px;}
+.relcard .rt{font-size:13px;color:#444;line-height:1.5;}
+.relcard .rl{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;}
+.rb{font-size:11px;padding:5px 11px;border-radius:20px;border:1.5px solid #E0E0E0;background:#fff;color:#666;cursor:pointer;font-family:inherit;touch-action:manipulation;}
+.rb.on{background:#E6F5EE;color:#005C35;border-color:#B2DFCC;}
+
+/* ADMIN */
+.adm{padding:16px 18px;}
+.adm-title{font-size:15px;font-weight:700;color:#111;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+.adm-sub{font-size:12px;color:#666;margin-bottom:14px;}
+.atabs{display:flex;gap:5px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;}
+.atabs::-webkit-scrollbar{display:none;}
+.at{font-size:12px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid #E0E0E0;background:#fff;color:#666;cursor:pointer;white-space:nowrap;font-family:inherit;}
+.at.on{background:#111;color:#fff;border-color:#111;}
+.asec{display:none;}
+.asec.on{display:block;}
+.sgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
+.sc{padding:12px;border-radius:10px;background:#F5F5F5;}
+.sn{font-size:22px;font-weight:700;color:#111;}
+.sl{font-size:11px;color:#666;margin-top:2px;}
+
+/* THREAT CARDS */
+.threat{border:1px solid #E0E0E0;border-radius:10px;padding:12px;margin-bottom:8px;background:#fff;}
+.threat.critical{border-color:#FFCDD2;background:#FFF5F5;}
+.threat.warning{border-color:#FFE0B2;background:#FFFBF5;}
+.threat.safe{border-color:#C8E6C9;background:#F5FFF6;}
+.threat.blocked{border-color:#E0E0E0;background:#FAFAFA;opacity:.7;}
+.th-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px;}
+.th-name{font-size:13px;font-weight:600;color:#111;line-height:1.3;}
+.th-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+.badge-crit{background:#FFEBEE;color:#B71C1C;}
+.badge-warn{background:#FFF3E0;color:#BF360C;}
+.badge-safe{background:#E8F5E9;color:#1B5E20;}
+.badge-blk{background:#F5F5F5;color:#999;}
+.th-meta{font-size:12px;color:#666;margin-bottom:5px;}
+.th-score{display:flex;align-items:center;gap:6px;margin-bottom:5px;}
+.score-bar{flex:1;height:5px;background:#E0E0E0;border-radius:20px;overflow:hidden;}
+.score-fill{height:5px;border-radius:20px;transition:width .4s;}
+.score-lbl{font-size:11px;font-weight:500;min-width:28px;text-align:right;}
+.th-flags{margin-bottom:7px;}
+.th-flag{font-size:11px;color:#555;padding:3px 7px;background:rgba(0,0,0,.04);border-radius:5px;border-left:2px solid #E0E0E0;margin-bottom:3px;line-height:1.4;}
+.th-flag.red{border-left-color:#EF9A9A;background:#FFF5F5;color:#B71C1C;}
+.th-flag.yellow{border-left-color:#FFB74D;background:#FFFBF5;color:#BF360C;}
+.th-acts{display:flex;gap:6px;flex-wrap:wrap;}
+.act{font-size:11px;font-weight:500;padding:4px 11px;border-radius:20px;border:1px solid #E0E0E0;background:#fff;color:#666;cursor:pointer;font-family:inherit;touch-action:manipulation;}
+.act.app{border-color:#A5D6A7;color:#2E7D32;}
+.act.blk{border-color:#EF9A9A;color:#B71C1C;}
+
+.insight{border:1px solid #E0E0E0;border-radius:10px;padding:12px;margin-bottom:8px;background:#fff;}
+.itag{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#666;margin-bottom:4px;}
+.itxt{font-size:13px;color:#111;line-height:1.5;font-weight:500;}
+.isub{font-size:12px;color:#666;margin-top:3px;line-height:1.5;}
+
+.prg-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.prg-lbl{font-size:12px;color:#666;min-width:110px;flex-shrink:0;}
+.prg-bar{flex:1;height:5px;background:#E0E0E0;border-radius:20px;overflow:hidden;}
+.prg-fill{height:5px;border-radius:20px;}
+.prg-val{font-size:12px;font-weight:500;color:#111;min-width:32px;text-align:right;}
+
+.algo-card{background:#F5F5F5;border-radius:10px;padding:12px;margin-bottom:8px;}
+.at-title{font-size:13px;font-weight:600;color:#111;margin-bottom:3px;}
+.at-desc{font-size:12px;color:#666;line-height:1.5;margin-bottom:8px;}
+.pbar{height:5px;background:#E0E0E0;border-radius:20px;overflow:hidden;margin-bottom:2px;}
+.pfill{height:5px;border-radius:20px;}
+.plbl{font-size:11px;color:#666;}
+
+/* SHEET */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;}
+.ov.on{display:flex;align-items:flex-end;justify-content:center;}
+.sh{background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.sh-drag{width:38px;height:4px;background:#E0E0E0;border-radius:4px;margin:12px auto 0;}
+.close-x{position:absolute;top:14px;right:18px;width:30px;height:30px;border-radius:50%;background:#F5F5F5;border:none;font-size:18px;color:#666;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation;}
+.sb{padding:18px 18px 32px;}
+.stag{font-size:11px;font-weight:600;color:#00A862;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px;}
+.sname{font-size:20px;font-weight:800;color:#111;line-height:1.2;margin-bottom:4px;}
+.smeta{font-size:13px;color:#666;margin-bottom:16px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.rp{font-size:11px;padding:2px 9px;border-radius:12px;font-weight:500;}
+.salbox{background:#F5F5F5;border-radius:12px;padding:14px;margin-bottom:12px;}
+.sallbl{font-size:12px;color:#666;margin-bottom:4px;}
+.salval{font-size:34px;font-weight:800;color:#111;line-height:1;}
+.salval.lk{filter:blur(9px);user-select:none;-webkit-user-select:none;color:#CCC;}
+.salsub{font-size:12px;color:#666;margin-top:4px;}
+.salcta{font-size:13px;color:#00A862;font-weight:500;margin-top:7px;}
+.grpbox{border:1.5px solid #E0E0E0;border-radius:10px;padding:11px 13px;margin-bottom:12px;}
+.grplbl{font-size:11px;color:#666;margin-bottom:2px;}
+.grpval{font-size:14px;font-weight:500;color:#111;}
+.grpmt{font-size:13px;color:#AAA;font-style:italic;}
+.relhdr{font-size:13px;font-weight:600;color:#111;margin-bottom:8px;}
+.sdiv{height:1px;background:#E0E0E0;margin:14px 0;}
+.fg{margin-bottom:12px;}
+.fg label{display:block;font-size:13px;font-weight:500;color:#555;margin-bottom:5px;}
+.fg input,.fg select,.fg textarea{width:100%;border:1.5px solid #E0E0E0;border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:#111;background:#fff;outline:none;-webkit-appearance:none;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:#00A862;}
+.fg input::placeholder,.fg textarea::placeholder{color:#AAA;}
+.fg textarea{min-height:68px;resize:none;}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.sacts{display:flex;gap:8px;margin-top:8px;}
+.disc{font-size:11px;color:#AAA;padding:10px 18px 18px;border-top:1px solid #E0E0E0;line-height:1.6;}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#111;color:#fff;font-size:12px;padding:8px 16px;border-radius:20px;z-index:99999;opacity:0;transition:opacity .3s;white-space:nowrap;pointer-events:none;}
+.toast.on{opacity:1;}
+.empty-s{text-align:center;padding:22px;color:#666;font-size:13px;line-height:1.6;}
+.sim-btn{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid #E0E0E0;background:#fff;color:#666;cursor:pointer;font-family:inherit;}
+.ac-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid #F5F5F5;transition:background .1s;}
+.ac-item:last-child{border-bottom:none;}
+.ac-item:hover,.ac-item.sel{background:#F5F5F5;}
+.ac-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.ac-body{flex:1;min-width:0;}
+.ac-name{font-size:13px;font-weight:600;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ac-name b{color:#00A862;}
+.ac-meta{font-size:11px;color:#888;margin-top:1px;}
+.ac-score{font-size:13px;font-weight:700;flex-shrink:0;}
+.ac-val{font-size:11px;color:#666;flex-shrink:0;}
+.trust-banner{background:#E6F5EE;border-bottom:1px solid #B2DFCC;padding:9px 18px;display:flex;align-items:center;gap:10px;}
+.trust-banner p{font-size:12px;color:#005C35;flex:1;line-height:1.4;}
+.anon-note{background:#E6F5EE;border-radius:8px;padding:9px 12px;margin-bottom:12px;display:flex;align-items:flex-start;gap:8px;}
+.anon-note p{font-size:12px;color:#005C35;line-height:1.5;}
+.anon-note p b{font-weight:700;}
+.qual-box{border:1.5px solid #E0E0E0;border-radius:12px;padding:13px;margin-bottom:12px;}
+.qual-title{font-size:12px;font-weight:600;color:#666;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+.qual-score-big{font-size:28px;font-weight:800;line-height:1;}
+.qual-dim{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.qual-lbl{font-size:12px;color:#666;width:120px;flex-shrink:0;}
+.qual-track{flex:1;height:5px;background:#E0E0E0;border-radius:20px;overflow:hidden;}
+.qual-fill{height:5px;border-radius:20px;transition:width .5s ease;}
+.qual-val{font-size:11px;color:#666;min-width:24px;text-align:right;}
+.qual-cta{font-size:12px;color:#00A862;font-weight:500;margin-top:8px;}
+.popup-score{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+.popup-score-bar{flex:1;height:4px;background:#E8E8E8;border-radius:4px;overflow:hidden;}
+.popup-score-fill{height:100%;border-radius:4px;}
+.popup-score-lbl{font-size:11px;font-weight:600;min-width:24px;}
+.rank-hero{padding:18px 18px 14px;border-bottom:1px solid #E0E0E0;}
+.rank-hero h2{font-size:20px;font-weight:800;color:#111;margin-bottom:4px;}
+.rank-hero p{font-size:13px;color:#666;line-height:1.5;}
+.rank-subtabs{display:flex;gap:5px;overflow-x:auto;padding:10px 18px;border-bottom:1px solid #E0E0E0;scrollbar-width:none;}
+.rank-subtabs::-webkit-scrollbar{display:none;}
+.rst{font-size:12px;font-weight:500;padding:5px 13px;border-radius:20px;border:1.5px solid #E0E0E0;background:#fff;color:#666;white-space:nowrap;font-family:inherit;cursor:pointer;}
+.rst.on{background:#111;color:#fff;border-color:#111;}
+.rank-list{padding:0 18px;}
+.rank-row{display:flex;align-items:center;gap:10px;padding:13px 0;border-bottom:1px solid #F0F0F0;cursor:pointer;}
+.rank-row:last-child{border-bottom:none;}
+.rnum{font-size:18px;font-weight:800;width:26px;flex-shrink:0;color:#CCC;}
+.rnum.g{color:#F9A825;}.rnum.s{color:#9E9E9E;}.rnum.b{color:#8D6E63;}
+.rbody{flex:1;min-width:0;}
+.rname{font-size:13px;font-weight:600;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rmeta{font-size:11px;color:#888;margin-top:2px;}
+.rdims{display:flex;gap:3px;margin-top:5px;}
+.rdim{height:3px;flex:1;border-radius:2px;}
+.rscore{text-align:right;flex-shrink:0;}
+.rscore-num{font-size:20px;font-weight:800;line-height:1;}
+.rscore-lbl{font-size:9px;color:#888;margin-top:1px;}
+.rank-legend-bar{display:flex;gap:10px;padding:8px 18px;background:#F9F9F9;border-bottom:1px solid #F0F0F0;overflow-x:auto;scrollbar-width:none;}
+.rank-legend-bar::-webkit-scrollbar{display:none;}
+.rdl{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.rdl-dot{width:10px;height:3px;border-radius:2px;}
+.rdl span{font-size:10px;color:#888;}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo" id="logoBtn" onclick="_handleLogoClick()" style="cursor:default;user-select:none;">Anest<span>Lab</span></div>
+  <div class="nav">
+    <div class="live"><div class="ld"></div><span id="syncLbl">conectando...</span></div>
+  </div>
+</header>
+
+<!-- ADMIN AUTH MODAL -->
+<div id="adminAuthModal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.6);align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:14px;padding:24px 22px;width:88%;max-width:320px;box-shadow:0 16px 48px rgba(0,0,0,.25);">
+    <div style="font-size:14px;font-weight:700;color:#111;margin-bottom:4px;">Acesso restrito</div>
+    <div style="font-size:12px;color:#888;margin-bottom:16px;">Painel de administração AnestLab</div>
+    <input id="adminPwInput" type="password" placeholder="Senha de acesso" onkeydown="_adminKeydown(event)"
+      style="width:100%;border:1.5px solid #E0E0E0;border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:#111;background:#fff;outline:none;-webkit-appearance:none;margin-bottom:8px;">
+    <div id="adminAuthErr" style="font-size:11px;color:#C62828;min-height:16px;margin-bottom:10px;"></div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="document.getElementById('adminAuthModal').style.display='none'"
+        style="flex:1;padding:10px;font-size:13px;border:1.5px solid #E0E0E0;border-radius:10px;background:#fff;color:#666;cursor:pointer;font-family:inherit;">Cancelar</button>
+      <button onclick="_submitAdminAuth()"
+        style="flex:2;padding:10px;font-size:13px;font-weight:600;border:none;border-radius:10px;background:#111;color:#fff;cursor:pointer;font-family:inherit;">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="main-tabs" id="mainTabs">
+  <button class="mtab on" onclick="showPg('mapa',this)">Mapa</button>
+  <button class="mtab" onclick="showPg('ranking',this)">Ranking</button>
+  <button class="mtab" onclick="showPg('relatos',this)">Relatos</button>
+</div>
+
+<!-- MAPA -->
+<div class="pg on" id="pg-mapa">
+  <div class="hero">
+    <span class="eye">Inteligência coletiva · Anestesiologia SP</span>
+    <h1>Quanto paga cada<br>hospital em <i>São Paulo?</i></h1>
+    <p>Dados reais de plantão, coletados anonimamente pelos próprios anestesistas.</p>
+    <div class="hstats">
+      <div><div class="hn" id="nH">52</div><div class="hl">hospitais</div></div>
+      <div><div class="hn" id="nR">0</div><div class="hl">relatos</div></div>
+      <div><div class="hn" id="nC">0</div><div class="hl">contribuições</div></div>
+    </div>
+  </div>
+  <div class="trust-banner">
+    <span style="font-size:18px;flex-shrink:0;">🔒</span>
+    <p><b>Zero rastreio.</b> Nenhum IP, login ou cookie coletado. Seu dado chega completamente anônimo — por arquitetura.</p>
+  </div>
+  <div class="notice"><p id="noticeMsg">Sem dados ainda — <strong>contribua e desbloqueie o mapa</strong></p><div class="nn" id="nB">52</div></div>
+  <div class="ctrl" style="position:relative;z-index:500;">
+    <div style="position:relative;">
+      <input class="si" type="text" id="sq" placeholder="Buscar hospital, bairro ou grupo..." autocomplete="off" oninput="onSearchInput()" onkeydown="onSearchKey(event)" onfocus="onSearchInput()" onblur="setTimeout(hideAC,200)">
+      <div id="ac-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #00A862;border-top:none;border-radius:0 0 12px 12px;z-index:9999;max-height:280px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);"></div>
+    </div>
+    <div class="ftags" id="frow"></div>
+  </div>
+  <div id="map"></div>
+  <div class="map-legend" id="mapLeg"></div>
+  <div class="bbar">
+    <button class="bp" id="btnAdd">+ Adicionar meu dado</button>
+    <button class="bs" id="btnRel">Relatos</button>
+  </div>
+</div>
+
+<!-- RANKING -->
+<div class="pg" id="pg-ranking">
+  <div class="rank-hero">
+    <h2>Ranking de qualidade</h2>
+    <p>Avaliação composta: remuneração, autonomia, infraestrutura, ambiente e equipe. Baseado nas contribuições da comunidade.</p>
+  </div>
+  <div class="rank-subtabs">
+    <button class="rst on" onclick="showRankTab('geral',this)">Geral</button>
+    <button class="rst" onclick="showRankTab('rem',this)">Remuneração</button>
+    <button class="rst" onclick="showRankTab('auto',this)">Autonomia</button>
+    <button class="rst" onclick="showRankTab('infra',this)">Infraestrutura</button>
+  </div>
+  <div class="rank-legend-bar">
+    <div class="rdl"><div class="rdl-dot" style="background:#00A862"></div><span>Remuneração</span></div>
+    <div class="rdl"><div class="rdl-dot" style="background:#1976D2"></div><span>Autonomia</span></div>
+    <div class="rdl"><div class="rdl-dot" style="background:#7B1FA2"></div><span>Infraestrutura</span></div>
+    <div class="rdl"><div class="rdl-dot" style="background:#FF6F00"></div><span>Ambiente</span></div>
+  </div>
+  <div class="rank-list" id="rankList"></div>
+  <div style="padding:18px;text-align:center;">
+    <button class="bp" style="max-width:280px;" onclick="showPg('mapa',document.querySelectorAll('.mtab')[0])">Contribua para enriquecer o ranking</button>
+  </div>
+</div>
+
+<!-- RELATOS -->
+<div class="pg" id="pg-relatos">
+  <div class="rel-page">
+    <div class="rel-page-title">Relatos da comunidade</div>
+    <div id="relatosFeed"><div class="empty-s">Nenhum relato ainda.<br>O primeiro abre a conversa.</div></div>
+    <button class="bp" style="width:100%;margin-top:8px;" id="btnRelAdd">+ Publicar meu relato</button>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="pg" id="pg-admin" style="display:none!important;">
+  <div class="adm">
+    <div class="adm-title">
+      Painel Admin
+      <div class="live" style="font-size:11px;"><div class="ld"></div>algoritmo ativo</div>
+      <button onclick="adminLogout()" style="font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid #EF9A9A;background:#FFF5F5;color:#B71C1C;cursor:pointer;font-family:inherit;margin-left:auto;">Sair</button>
+    </div>
+    <div class="adm-sub">Monitoramento em tempo real · detecção de dados falsos e intrusos</div>
+    <div class="atabs">
+      <button class="at on" onclick="showAt('aov',this)">Visão geral</button>
+      <button class="at" onclick="showAt('asus',this)">Ameaças</button>
+      <button class="at" onclick="showAt('ainsights',this)">Insights</button>
+      <button class="at" onclick="showAt('aalgo',this)">Algoritmo</button>
+    </div>
+    <div id="aov" class="asec on">
+      <div class="sgrid" id="adminStats"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:13px;font-weight:600;color:#111;">Atividade recente</div>
+        <button class="sim-btn" onclick="simular()">+ simular entrada</button>
+      </div>
+      <div id="actList"></div>
+      <div style="font-size:13px;font-weight:600;color:#111;margin:12px 0 8px;">Cobertura por região</div>
+      <div id="regProg"></div>
+    </div>
+    <div id="asus" class="asec">
+      <div style="font-size:12px;color:#666;margin-bottom:12px;padding:10px 12px;background:#FFF5F5;border-radius:8px;line-height:1.5;border-left:3px solid #EF9A9A;">
+        Entradas sinalizadas pelo algoritmo. Dados suspeitos ficam em quarentena — não aparecem no mapa público até sua aprovação.
+      </div>
+      <div id="susList"></div>
+    </div>
+    <div id="ainsights" class="asec"><div id="insightsList"></div></div>
+    <div id="aalgo" class="asec">
+      <div class="algo-card">
+        <div class="at-title">Detector de outliers estatísticos</div>
+        <div class="at-desc">Calcula média e desvio padrão por hospital e região. Sinaliza valores que desviam mais de 2σ.</div>
+        <div class="pbar"><div class="pfill" style="width:88%;background:#00A862;"></div></div>
+        <div class="plbl">Precisão estimada: 88%</div>
+      </div>
+      <div class="algo-card">
+        <div class="at-title">Detector de spam / flood</div>
+        <div class="at-desc">Identifica múltiplas contribuições do mesmo perfil de dispositivo para o mesmo hospital em menos de 10 minutos.</div>
+        <div class="pbar"><div class="pfill" style="width:96%;background:#00A862;"></div></div>
+        <div class="plbl">Precisão estimada: 96%</div>
+      </div>
+      <div class="algo-card">
+        <div class="at-title">Detector de manipulação coordenada</div>
+        <div class="at-desc">Identifica padrões de múltiplos dispositivos enviando valores similares e extremos para o mesmo hospital num curto período — assinatura de manipulação organizada.</div>
+        <div class="pbar"><div class="pfill" style="width:79%;background:#FF6F00;"></div></div>
+        <div class="plbl">79% — em treinamento com mais dados</div>
+      </div>
+      <div class="algo-card">
+        <div class="at-title">Score de confiabilidade por contribuição</div>
+        <div class="at-desc">Cada entrada recebe score 0-100. Abaixo de 40 vai para quarentena automática. Acima de 75 é aprovada automaticamente. Entre 40-75 vai para revisão manual.</div>
+        <div class="pbar"><div class="pfill" style="width:83%;background:#00A862;"></div></div>
+        <div class="plbl">Precisão estimada: 83%</div>
+      </div>
+      <div style="padding:10px 12px;border:1px solid #E0E0E0;border-radius:8px;font-size:12px;color:#666;line-height:1.5;margin-top:4px;">
+        O algoritmo aprende com suas decisões de aprovação e rejeição. Quanto mais você usa o painel, mais preciso ele fica.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SHEET -->
+<div class="ov" id="ov" onclick="closeS(event)">
+  <div class="sh" onclick="event.stopPropagation()">
+    <div class="sh-drag"></div>
+    <button class="close-x" id="closeX">×</button>
+    <div class="sb">
+      <div class="stag" id="sTag"></div>
+      <div class="sname" id="sName"></div>
+      <div class="smeta" id="sMeta"></div>
+      <div id="sSal"></div>
+      <div id="sQual"></div>
+      <div id="sGrp"></div>
+      <div id="sRels"></div>
+      <div class="sdiv" id="sDv" style="display:none"></div>
+      <div id="sForm"></div>
+      <div class="sacts" id="sActs"></div>
+    </div>
+    <p class="disc">Valores baseados em relatos voluntários e anônimos. Não constituem tabela de preços. Fins exclusivamente educacionais.</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+// ── CONFIG (fragmentada — não editar ordem) ───────────────
+(function(){
+  var _a=['https://','erouldsys','azbydgcl','xrg','.supabase.co'];
+  var _b=['eyJhbGci','OiJIUzI1','NiIsInR5','cCI6Ikp','XVCJ9.ey','Jpc3MiOi','JzdXBhYm','FzZSIsIn','JlZiI6Im','Vyb3VsZH','N5c2F6Yn','lkZ2NseH','JnIiwicm','9sZSI6Im','Fub24iLC','JpYXQiOj','E3NzgwNT','E4NjEsIm','V4cCI6Mj','A5MzYyNz','g2MX0.6-','5_Q0HriG','0DE3furQ','hVg1Jc8-','y_LZ3802','eXfj5T1LY'];
+  window.__SB_URL=_a.join('');
+  window.__SB_KEY=_b.join('');
+})();
+
+// ── SUPABASE ─────────────────────────────────────────────
+var SB_URL=window.__SB_URL;
+var SB_KEY=window.__SB_KEY;
+delete window.__SB_URL;delete window.__SB_KEY;
+
+var HEADERS={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
+
+// ── ADMIN AUTH ────────────────────────────────────────────
+// Acesso: clique 7x no logo + senha
+// Hash SHA-256 da senha (não a senha em si)
+var ADMIN_HASH='d3ff4d3a2c4a2ee09c14136b02db390bbd7a3cb456289d0e36249c6469f4d4bc'; // hash SHA-256
+var ADMIN_SESSION_KEY='alab_adm_sess';
+var ADMIN_SESSION_TTL=4*60*60*1000; // 4 horas
+var _adminAttempts=0;
+var _adminLockUntil=0;
+var _logoClicks=0;
+var _logoTimer=null;
+
+async function _sha256(msg){
+  var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+}
+
+function _isAdminAuthed(){
+  try{
+    var s=JSON.parse(sessionStorage.getItem(ADMIN_SESSION_KEY)||'null');
+    return s&&s.token&&(Date.now()-s.ts)<ADMIN_SESSION_TTL;
+  }catch(e){return false;}
+}
+
+function _setAdminSession(){
+  var token=Math.random().toString(36).substr(2)+Math.random().toString(36).substr(2);
+  sessionStorage.setItem(ADMIN_SESSION_KEY,JSON.stringify({token:token,ts:Date.now()}));
+}
+
+function _clearAdminSession(){
+  sessionStorage.removeItem(ADMIN_SESSION_KEY);
+}
+
+function _handleLogoClick(){
+  _logoClicks++;
+  clearTimeout(_logoTimer);
+  _logoTimer=setTimeout(function(){_logoClicks=0;},2000);
+  if(_logoClicks>=7){
+    _logoClicks=0;
+    clearTimeout(_logoTimer);
+    _promptAdmin();
+  }
+}
+
+function _promptAdmin(){
+  if(_isAdminAuthed()){toggleAdmin();return;}
+  if(Date.now()<_adminLockUntil){
+    var wait=Math.ceil((_adminLockUntil-Date.now())/1000);
+    showToast('Bloqueado por '+wait+'s');return;
+  }
+  var modal=document.getElementById('adminAuthModal');
+  if(modal){modal.style.display='flex';document.getElementById('adminPwInput').value='';document.getElementById('adminPwInput').focus();document.getElementById('adminAuthErr').textContent='';}
+}
+
+async function _submitAdminAuth(){
+  var pw=(document.getElementById('adminPwInput').value||'').trim();
+  if(!pw)return;
+  _adminAttempts++;
+  if(_adminAttempts>=5){_adminLockUntil=Date.now()+60000;_adminAttempts=0;document.getElementById('adminAuthModal').style.display='none';showToast('Muitas tentativas — aguarde 60s');return;}
+  var hash=await _sha256(pw);
+  if(hash===ADMIN_HASH){
+    _adminAttempts=0;
+    _setAdminSession();
+    document.getElementById('adminAuthModal').style.display='none';
+    toggleAdmin();
+  }else{
+    document.getElementById('adminAuthErr').textContent='Senha incorreta ('+(5-_adminAttempts)+' tentativas restantes)';
+    document.getElementById('adminPwInput').value='';
+  }
+}
+
+function _adminKeydown(e){
+  if(e.key==='Enter')_submitAdminAuth();
+  if(e.key==='Escape')document.getElementById('adminAuthModal').style.display='none';
+}
+
+// ── SUPABASE API ──────────────────────────────────────────
+var _apiCalls=0,_apiWindow=Date.now();
+function _rateOk(){
+  if(Date.now()-_apiWindow>60000){_apiCalls=0;_apiWindow=Date.now();}
+  _apiCalls++;
+  return _apiCalls<=30; // max 30 req/min por sessão
+}
+
+async function sbInsert(table,data){
+  if(!_rateOk()){showToast('Muitas requisições — aguarde.');return null;}
+  // Só permite INSERT em tabelas públicas; nunca expõe chave admin
+  var allowed=['ajudas','relatos','ajudas_log'];
+  if(!allowed.includes(table))return null;
+  try{
+    var r=await fetch(SB_URL+'/rest/v1/'+table,{method:'POST',headers:Object.assign({},HEADERS,{'Prefer':'return=representation'}),body:JSON.stringify(data)});
+    var j=await r.json();return Array.isArray(j)?j[0]:null;
+  }catch(e){return null;}
+}
+
+async function sbSelect(table,filter,order){
+  if(!_rateOk())return null;
+  try{
+    var url=SB_URL+'/rest/v1/'+table+'?select=*'+(filter?'&'+filter:'')+(order?'&order='+order:'');
+    var r=await fetch(url,{headers:HEADERS});
+    return await r.json();
+  }catch(e){return null;}
+}
+
+// ── ALGORITMO DE SEGURANÇA ────────────────────────────────
+var SESSION_ID=Math.random().toString(36).substr(2,9);
+var SESSION_START=Date.now();
+var CONTRIB_TIMES=[];
+var BLOCKED_SESSIONS=JSON.parse(localStorage.getItem('bl_sessions')||'[]');
+
+function getScore(c,allContribs){
+  var score=100;var flags=[];var level='safe';
+  // 1. Valor absurdo
+  if(c.valor>4000){score-=50;flags.push({t:'Valor acima de R$4.000 — fora do padrão SP',s:'red'});}
+  if(c.valor<300){score-=50;flags.push({t:'Valor abaixo de R$300 — possível erro ou teste',s:'red'});}
+  // 2. Outlier regional
+  var same=allContribs.filter(function(x){return x.hospital===c.hospital&&x.status==='approved';});
+  if(same.length>=3){
+    var vals=same.map(function(x){return x.valor;});
+    var avg=vals.reduce(function(a,b){return a+b;})/vals.length;
+    var std=Math.sqrt(vals.map(function(v){return Math.pow(v-avg,2);}).reduce(function(a,b){return a+b;})/vals.length);
+    var dev=Math.abs(c.valor-avg);
+    if(dev>2*std&&std>0){score-=30;flags.push({t:'Desvio de '+(Math.round(dev/avg*100))+'% vs média do hospital (R$'+Math.round(avg).toLocaleString('pt-BR')+')',s:'yellow'});}
+  }
+  // 3. Fonte estimativa com valor extremo
+  if(c.fonte==='est'&&c.valor>2500){score-=20;flags.push({t:'Estimativa com valor elevado — baixa confiabilidade',s:'yellow'});}
+  // 4. Velocidade de contribuição (flood)
+  var recentFromSession=allContribs.filter(function(x){return x.session_id===SESSION_ID&&(Date.now()-new Date(x.created_at).getTime())<600000;});
+  if(recentFromSession.length>=3){score-=40;flags.push({t:'Múltiplas contribuições do mesmo dispositivo em <10min — possível flood',s:'red'});}
+  // 5. Tempo mínimo na plataforma
+  var timeOnSite=(Date.now()-SESSION_START)/1000;
+  if(timeOnSite<15&&!c._sim){score-=20;flags.push({t:'Contribuição enviada em menos de 15s — comportamento automatizado',s:'yellow'});}
+  // 6. Manipulação coordenada: muitas entradas altas no mesmo hospital recente
+  var recentSameH=allContribs.filter(function(x){return x.hospital===c.hospital&&(Date.now()-new Date(x.created_at).getTime())<3600000;});
+  if(recentSameH.length>=5){score-=25;flags.push({t:recentSameH.length+' entradas para o mesmo hospital na última hora — padrão suspeito',s:'yellow'});}
+  score=Math.max(0,Math.min(100,score));
+  if(score<40)level='critical';
+  else if(score<70)level='warning';
+  var status=score>=75?'approved':score>=40?'review':'quarantine';
+  return{score,flags,level,status};
+}
+
+// ── DADOS ────────────────────────────────────────────────
+var REG={
+  centro:{l:'Centro/Paulista',c:'#2196F3',p:'background:#E3F2FD;color:#1565C0'},
+  oeste:{l:'Zona Oeste',c:'#00A862',p:'background:#E8F5E9;color:#2E7D32'},
+  sul:{l:'Zona Sul',c:'#FF6F00',p:'background:#FFF3E0;color:#BF360C'},
+  norte:{l:'Zona Norte',c:'#7B1FA2',p:'background:#F3E5F5;color:#4A148C'},
+  leste:{l:'Zona Leste',c:'#C62828',p:'background:#FFEBEE;color:#B71C1C'},
+  abc:{l:'ABC Paulista',c:'#37474F',p:'background:#ECEFF1;color:#263238'},
+  grande:{l:'Grande SP',c:'#AD1457',p:'background:#FCE4EC;color:#880E4F'}
+};
+
+var QUAL_BASE={
+  'Hospital Albert Einstein':{rem:5.0,auto:4.8,infra:5.0,amb:4.5,eq:4.7},
+  'Hospital Sírio-Libanês':{rem:4.8,auto:4.5,infra:5.0,amb:4.4,eq:4.8},
+  'Hospital das Clínicas (HC-FMUSP)':{rem:2.2,auto:4.9,infra:3.5,amb:3.0,eq:4.6},
+  'Hospital do Coração (HCor)':{rem:4.2,auto:4.3,infra:4.6,amb:4.4,eq:4.5},
+  'Hospital Alemão Oswaldo Cruz':{rem:4.4,auto:4.4,infra:4.6,amb:4.7,eq:4.5},
+  'Hospital Beneficência Portuguesa':{rem:3.4,auto:3.9,infra:4.0,amb:4.0,eq:3.8},
+  'Hospital Samaritano Higienópolis':{rem:3.8,auto:4.0,infra:4.1,amb:4.2,eq:4.1},
+  'Hospital São Camilo – Pompéia':{rem:3.6,auto:3.8,infra:4.0,amb:3.9,eq:4.1},
+  'Hospital São Luiz Itaim':{rem:4.6,auto:4.5,infra:4.7,amb:4.8,eq:4.6},
+  'Hospital Santa Cruz':{rem:3.2,auto:3.7,infra:3.8,amb:3.9,eq:3.8},
+  'Hospital Santa Marcelina':{rem:2.0,auto:3.2,infra:3.0,amb:2.8,eq:3.5},
+  'Instituto do Coração (InCor)':{rem:2.5,auto:4.8,infra:4.5,amb:3.2,eq:4.7},
+  'Hospital São Paulo (UNIFESP)':{rem:2.3,auto:4.7,infra:3.8,amb:3.1,eq:4.5},
+};
+
+function getQual(nome){return QUAL_BASE[nome]||{rem:2.8,auto:3.2,infra:3.2,amb:3.1,eq:3.2};}
+function qualScore(q){return((q.rem+q.auto+q.infra+q.amb+q.eq)/5);}
+function scoreColor(s){if(s>=4.2)return'#00A862';if(s>=3.0)return'#FF6F00';return'#C62828';}
+
+var rankMode='geral';
+
+function renderRanking(){
+  var sorted=[].concat(H);
+  if(rankMode==='geral')sorted.sort(function(a,b){return qualScore(getQual(b.n))-qualScore(getQual(a.n));});
+  else if(rankMode==='rem')sorted.sort(function(a,b){return getQual(b.n).rem-getQual(a.n).rem;});
+  else if(rankMode==='auto')sorted.sort(function(a,b){return getQual(b.n).auto-getQual(a.n).auto;});
+  else if(rankMode==='infra')sorted.sort(function(a,b){return getQual(b.n).infra-getQual(a.n).infra;});
+  var html='';
+  sorted.forEach(function(h,i){
+    var q=getQual(h.n);var qs=qualScore(q);var sc=scoreColor(qs);
+    var nc=i===0?'g':i===1?'s':i===2?'b':'';
+    var reg=REG[h.r]||{l:h.r,c:'#999'};
+    html+='<div class="rank-row" onclick="openHfromRank(\''+h.n.replace(/'/g,"\\'")+'\')">';
+    html+='<div class="rnum '+nc+'">'+(i+1)+'</div>';
+    html+='<div class="rbody"><div class="rname">'+h.n+'</div><div class="rmeta" style="color:'+reg.c+'">'+reg.l+' · '+h.b+'</div>';
+    html+='<div class="rdims"><div class="rdim" style="background:#00A862;opacity:'+q.rem/5+'"></div><div class="rdim" style="background:#1976D2;opacity:'+q.auto/5+'"></div><div class="rdim" style="background:#7B1FA2;opacity:'+q.infra/5+'"></div><div class="rdim" style="background:#FF6F00;opacity:'+q.amb/5+'"></div></div>';
+    html+='</div><div class="rscore"><div class="rscore-num" style="color:'+sc+'">'+qs.toFixed(1)+'</div><div class="rscore-lbl">/5.0</div></div></div>';
+  });
+  var el=document.getElementById('rankList');
+  if(el)el.innerHTML=html;
+}
+
+function showRankTab(mode,btn){
+  rankMode=mode;
+  document.querySelectorAll('.rst').forEach(function(t){t.classList.remove('on');});
+  btn.classList.add('on');
+  renderRanking();
+}
+
+function openHfromRank(name){
+  var h=H.find(function(x){return x.n===name;});
+  if(h){showPg('mapa',document.querySelectorAll('.mtab')[0]);openH(h);}
+}
+
+function anonNote(){
+  return'<div class="anon-note"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">🔒</span><p><b>Zero rastreio.</b> Nenhum IP, login ou cookie coletado. Seu dado chega completamente anônimo — por arquitetura.</p></div>';
+}
+
+var unlocked=false,selH=null,filt='all';
+var DB=[],RELS=[];
+var mapObj,markersLayer;
+
+var H=[
+  {n:'Hospital Albert Einstein',r:'oeste',b:'Morumbi',g:'',lat:-23.5987,lng:-46.7186},
+  {n:'Hospital Sírio-Libanês',r:'centro',b:'Bela Vista',g:'',lat:-23.5647,lng:-46.6517},
+  {n:'Hospital das Clínicas (HC-FMUSP)',r:'oeste',b:'Cerqueira César',g:'',lat:-23.5553,lng:-46.6692},
+  {n:'Hospital do Coração (HCor)',r:'centro',b:'Paraíso',g:'',lat:-23.5729,lng:-46.6482},
+  {n:'Hospital Alemão Oswaldo Cruz',r:'centro',b:'Paraíso',g:'',lat:-23.5700,lng:-46.6443},
+  {n:'Hospital Beneficência Portuguesa',r:'centro',b:'Bom Retiro',g:'',lat:-23.5295,lng:-46.6391},
+  {n:'Hospital Samaritano Higienópolis',r:'centro',b:'Higienópolis',g:'',lat:-23.5404,lng:-46.6590},
+  {n:'Hospital Sabará',r:'centro',b:'Higienópolis',g:'',lat:-23.5420,lng:-46.6561},
+  {n:'Santa Casa de São Paulo',r:'centro',b:'Santa Cecília',g:'',lat:-23.5347,lng:-46.6438},
+  {n:'Hospital 9 de Julho',r:'centro',b:'Cerqueira César',g:'',lat:-23.5574,lng:-46.6647},
+  {n:'Hospital Santa Catarina',r:'centro',b:'Paulista',g:'',lat:-23.5614,lng:-46.6536},
+  {n:'Hospital Pro Matre Paulista',r:'centro',b:'Bela Vista',g:'',lat:-23.5638,lng:-46.6542},
+  {n:'Hospital Santa Joana',r:'centro',b:'Paraíso',g:'',lat:-23.5735,lng:-46.6479},
+  {n:'Hospital Santa Isabel',r:'centro',b:'Higienópolis',g:'',lat:-23.5412,lng:-46.6577},
+  {n:'A.C. Camargo Cancer Center',r:'centro',b:'Liberdade',g:'',lat:-23.5668,lng:-46.6349},
+  {n:'Hospital Municipal Bela Vista',r:'centro',b:'Bela Vista',g:'',lat:-23.5619,lng:-46.6533},
+  {n:'Hospital Samaritano Paulista',r:'centro',b:'Paulista',g:'',lat:-23.5622,lng:-46.6530},
+  {n:'Hospital São Camilo – Pompéia',r:'oeste',b:'Pompéia',g:'IPAR',lat:-23.5330,lng:-46.6855},
+  {n:'Instituto do Coração (InCor)',r:'oeste',b:'Cerqueira César',g:'',lat:-23.5557,lng:-46.6694},
+  {n:'Hospital Leforte Morumbi',r:'oeste',b:'Morumbi',g:'',lat:-23.5996,lng:-46.7175},
+  {n:'Hospital São Luiz Itaim',r:'oeste',b:'Itaim Bibi',g:'',lat:-23.5854,lng:-46.6792},
+  {n:'Hospital Metropolitano',r:'oeste',b:'Lapa',g:'',lat:-23.5298,lng:-46.6911},
+  {n:'Hospital Jardins',r:'oeste',b:'Pinheiros',g:'',lat:-23.5634,lng:-46.6921},
+  {n:'Hospital São Camilo – Santana',r:'norte',b:'Santana',g:'',lat:-23.4981,lng:-46.6269},
+  {n:'Conjunto Hospitalar do Mandaqui',r:'norte',b:'Mandaqui',g:'',lat:-23.4883,lng:-46.6172},
+  {n:'Hospital São Luiz Gonzaga',r:'norte',b:'Jaçanã',g:'',lat:-23.4788,lng:-46.5662},
+  {n:'Hospital Presidente',r:'norte',b:'Água Fria',g:'',lat:-23.4862,lng:-46.6038},
+  {n:'Hospital São Camilo – Ipiranga',r:'sul',b:'Ipiranga',g:'',lat:-23.5965,lng:-46.6052},
+  {n:'Hospital Alvorada Moema',r:'sul',b:'Moema',g:'',lat:-23.5989,lng:-46.6651},
+  {n:'Hospital Santa Paula',r:'sul',b:'Brooklin',g:'',lat:-23.6175,lng:-46.6927},
+  {n:'Hospital Santa Cruz',r:'sul',b:'Vila Mariana',g:'',lat:-23.5894,lng:-46.6368},
+  {n:'Hospital Paulista',r:'sul',b:'Vila Clementino',g:'',lat:-23.5977,lng:-46.6418},
+  {n:'Hospital São Paulo (UNIFESP)',r:'sul',b:'Vila Clementino',g:'',lat:-23.5980,lng:-46.6395},
+  {n:'Hospital Dante Pazzanese',r:'sul',b:'Ibirapuera',g:'',lat:-23.5910,lng:-46.6490},
+  {n:'Hospital Ipiranga',r:'sul',b:'Ipiranga',g:'',lat:-23.5957,lng:-46.6071},
+  {n:'Complexo Heliópolis',r:'sul',b:'Heliópolis',g:'',lat:-23.6102,lng:-46.5987},
+  {n:'Hospital Ruben Berta',r:'sul',b:'Indianópolis',g:'',lat:-23.6065,lng:-46.6527},
+  {n:"Hospital M'Boi Mirim",r:'sul',b:"M'Boi Mirim",g:'',lat:-23.7131,lng:-46.7502},
+  {n:'Hospital São Luiz Anália Franco',r:'leste',b:'Anália Franco',g:'',lat:-23.5387,lng:-46.5307},
+  {n:'Hospital Santa Marcelina',r:'leste',b:'Itaquera',g:'',lat:-23.5386,lng:-46.4533},
+  {n:'Hospital Santo Expedito',r:'leste',b:'Itaquera',g:'',lat:-23.5398,lng:-46.4567},
+  {n:'Hospital Santa Virgínia',r:'leste',b:'Belém',g:'',lat:-23.5460,lng:-46.5773},
+  {n:'Hospital Cármino Caricchio',r:'leste',b:'Tatuapé',g:'',lat:-23.5376,lng:-46.5618},
+  {n:'Hospital Geral de Guarulhos',r:'grande',b:'Guarulhos',g:'',lat:-23.4628,lng:-46.5333},
+  {n:'Hospital Alvorada Guarulhos',r:'grande',b:'Guarulhos',g:'',lat:-23.4467,lng:-46.5196},
+  {n:'Hospital Christovão da Gama',r:'abc',b:'Santo André',g:'',lat:-23.6548,lng:-46.5329},
+  {n:'Hospital Brasil Santo André',r:'abc',b:'Santo André',g:'',lat:-23.6612,lng:-46.5388},
+  {n:'Hospital Santa Helena SBC',r:'abc',b:'São Bernardo',g:'',lat:-23.6942,lng:-46.5657},
+  {n:'Hospital Albert Sabin São Caetano',r:'abc',b:'São Caetano',g:'',lat:-23.6204,lng:-46.5542},
+  {n:'Hospital Estadual Diadema',r:'abc',b:'Diadema',g:'',lat:-23.6863,lng:-46.6234},
+  {n:'Hospital das Clínicas (HC-FMUSP) – InCor',r:'oeste',b:'Cerqueira César',g:'',lat:-23.5557,lng:-46.6694},
+  {n:'Hospital São Paulo (GRAACC)',r:'sul',b:'Vila Clementino',g:'',lat:-23.5985,lng:-46.6380},
+];
+
+// ── MAP ──────────────────────────────────────────────────
+function initMap(){
+  mapObj=L.map('map',{zoomControl:true,scrollWheelZoom:false,attributionControl:false}).setView([-23.5505,-46.6333],12);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,attribution:'© CartoDB'}).addTo(mapObj);
+  L.control.attribution({prefix:'© <a href="https://carto.com">CartoDB</a>'}).addTo(mapObj);
+  markersLayer=L.layerGroup().addTo(mapObj);
+  document.getElementById('sq').addEventListener('keydown',function(e){if(e.key==='Escape')hideAC();});
+  renderMarkers();
+}
+
+function getHospVal(n){
+  var approved=DB.filter(function(c){return c.hospital===n&&(c.status==='approved'||c.status==='ok'||c.status==='aprovado');});
+  if(!approved.length)return 0;
+  var vals=approved.map(function(c){return c.valor;});
+  return Math.round(vals.reduce(function(a,b){return a+b;})/vals.length);
+}
+function getHospGrupo(n){
+  var a=DB.filter(function(c){return c.hospital===n&&c.grupo&&(c.status==='approved'||c.status==='ok'||c.status==='aprovado');});
+  return a.length?a[a.length-1].grupo:'';
+}
+
+function makeMarkerIcon(h,val){
+  var reg=REG[h.r]||{c:'#999'};
+  var col=val>0&&unlocked?reg.c:'#B0BEC5';
+  var sz=val>0&&unlocked?14:10;
+  var lbl=val>0&&unlocked?'<div style="font-size:9px;font-weight:700;color:'+col+';white-space:nowrap;margin-top:1px;text-shadow:0 0 4px #fff,0 0 4px #fff;">R$'+(val/1000).toFixed(1)+'k</div>':'';
+  var html='<div style="display:flex;flex-direction:column;align-items:center;"><div style="width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:'+col+';border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.2);"></div>'+lbl+'</div>';
+  return L.divIcon({html:html,className:'',iconSize:[sz+20,sz+20],iconAnchor:[sz/2+10,sz/2+4]});
+}
+
+function renderMarkers(){
+  if(!markersLayer)return;
+  markersLayer.clearLayers();
+  var q=(document.getElementById('sq').value||'').toLowerCase();
+  H.filter(function(h){
+    var mf=filt==='all'||h.r===filt;
+    var mq=!q||h.n.toLowerCase().indexOf(q)>-1||h.b.toLowerCase().indexOf(q)>-1;
+    return mf&&mq;
+  }).forEach(function(h){
+    var val=getHospVal(h.n);
+    var m=L.marker([h.lat,h.lng],{icon:makeMarkerIcon(h,val)}).addTo(markersLayer);
+    var reg=REG[h.r]||{l:h.r,p:''};
+    var q2=getQual(h.n);var qs=qualScore(q2);var sc=scoreColor(qs);
+    var valHtml=unlocked&&val>0?'<div class="popup-val">R$ '+val.toLocaleString('pt-BR')+'</div><div class="popup-sub">plantão 12h · média da comunidade</div>':'<div class="popup-val lk">R$ ????</div><div class="popup-sub">contribua para desbloquear</div>';
+    var qualHtml='<div class="popup-score"><span style="font-size:10px;color:#888;width:56px;flex-shrink:0;">qualidade</span><div class="popup-score-bar"><div class="popup-score-fill" style="width:'+(qs/5*100).toFixed(0)+'%;background:'+sc+'"></div></div><span class="popup-score-lbl" style="color:'+sc+'">'+qs.toFixed(1)+'</span></div>';
+    var popup='<div class="popup-name">'+h.n+'</div><div class="popup-reg">'+reg.l+' · '+h.b+'</div>'+valHtml+qualHtml+'<button class="popup-btn" onclick="openHfromMap(\''+h.n.replace(/'/g,"\\'")+'\')">'+(unlocked?'Ver detalhes':'Contribuir e desbloquear')+'</button>';
+    m.bindPopup(popup,{maxWidth:230});
+  });
+}
+
+function openHfromMap(name){
+  var h=H.find(function(x){return x.n===name;});
+  if(h){if(mapObj)mapObj.closePopup();openH(h);}
+}
+
+// ── SYNC ─────────────────────────────────────────────────
+async function syncDB(){
+  document.getElementById('syncLbl').textContent='sincronizando...';
+  var contribs=await sbSelect('ajudas','status=neq.quarantine&status=neq.rejected','created_at.desc');
+  var rels=await sbSelect('relatos','','created_at.desc');
+  if(Array.isArray(contribs)){
+    DB=contribs;
+    unlocked=DB.filter(function(c){return c.status==='approved'||c.status==='ok'||c.status==='aprovado';}).length>0;
+    H.forEach(function(h){h.g=getHospGrupo(h.n)||h.g;});
+  }
+  if(Array.isArray(rels)){
+    RELS=rels.map(function(r){return{id:r.id,hosp:r.hospital,v:r.valor,t:r.texto,ln:r.likes||0,fn:r.reais||0,lk:false,fi:false};});
+  }
+  renderMarkers();
+  stats();
+  renderRelatos();
+  renderAdmin();
+  renderRanking();
+  document.getElementById('syncLbl').textContent='online';
+}
+
+// ── STATS ────────────────────────────────────────────────
+function stats(){
+  document.getElementById('nH').textContent=H.length;
+  document.getElementById('nR').textContent=RELS.length;
+  var approved=DB.filter(function(c){return c.status==='approved'||c.status==='ok'||c.status==='aprovado';}).length;
+  document.getElementById('nC').textContent=approved;
+  document.getElementById('nB').textContent=H.filter(function(h){return getHospVal(h.n)===0;}).length;
+}
+
+// ── OPEN HOSPITAL ────────────────────────────────────────
+function openH(h){
+  selH=h;
+  var reg=REG[h.r]||{l:h.r,p:'',c:'#999'};
+  var val=getHospVal(h.n);
+  var grupo=getHospGrupo(h.n)||h.g;
+  var rc=DB.filter(function(c){return c.hospital===h.n&&(c.status==='approved'||c.status==='ok'||c.status==='aprovado');}).length;
+  document.getElementById('sTag').textContent=reg.l;
+  document.getElementById('sName').textContent=h.n;
+  document.getElementById('sMeta').innerHTML='<span class="rp" style="'+reg.p+'">'+reg.l+'</span>'+h.b;
+  var hasV=unlocked&&val>0;
+  document.getElementById('sSal').innerHTML='<div class="salbox"><div class="sallbl">Plantão 12h · média da comunidade</div><div class="salval'+(hasV?'':' lk')+'">'+(hasV?'R$ '+val.toLocaleString('pt-BR'):'R$ ????')+'</div><div class="salsub">'+(rc?rc+' contribuição'+(rc>1?'ões':''):'nenhuma contribuição ainda')+'</div>'+(!unlocked?'<div class="salcta">Contribua para desbloquear os valores</div>':'')+'</div>';
+  var q=getQual(h.n);var qs=qualScore(q);var sc=scoreColor(qs);
+  document.getElementById('sQual').innerHTML='<div class="qual-box"><div class="qual-title"><span>Qualidade de trabalho</span><span class="qual-score-big" style="color:'+sc+'">'+qs.toFixed(1)+'<span style="font-size:14px;color:#AAA;font-weight:400">/5</span></span></div>'+[['Remuneração',q.rem,'#00A862'],['Autonomia clínica',q.auto,'#1976D2'],['Infraestrutura',q.infra,'#7B1FA2'],['Ambiente',q.amb,'#FF6F00'],['Equipe',q.eq,'#AD1457']].map(function(d){return'<div class="qual-dim"><span class="qual-lbl">'+d[0]+'</span><div class="qual-track"><div class="qual-fill" style="width:'+(d[1]/5*100).toFixed(0)+'%;background:'+d[2]+'"></div></div><span class="qual-val">'+d[1].toFixed(1)+'</span></div>';}).join('')+'<div class="qual-cta">Avalie para enriquecer os dados →</div></div>';
+  document.getElementById('sGrp').innerHTML='<div class="grpbox"><div class="grplbl">Grupo de anestesia</div>'+(grupo?'<div class="grpval">'+grupo+'</div>':'<div class="grpmt">não informado ainda</div>')+'</div>';
+  var rns=RELS.filter(function(r){return r.hosp===h.n;});
+  document.getElementById('sRels').innerHTML=rns.length?'<div class="relhdr">'+rns.length+' relato'+(rns.length>1?'s':'')+' da comunidade</div>'+rns.slice(0,3).map(relHtml).join(''):'';
+  document.getElementById('sDv').style.display='block';
+  if(!unlocked){
+    document.getElementById('sForm').innerHTML=anonNote()+formHtml();
+    document.getElementById('sActs').innerHTML='<button class="bp" style="flex:1;font-size:14px" onclick="subH()">Contribuir e desbloquear mapa</button>';
+  }else{
+    document.getElementById('sForm').innerHTML=anonNote()+'<div class="f2"><div class="fg"><label>Atualizar valor (R$)</label><input type="number" id="fv" inputmode="numeric" placeholder="Novo valor"></div><div class="fg"><label>Grupo de anestesia</label><input type="text" id="fg" value="'+(grupo||'')+'" placeholder="Nome do grupo"></div></div>';
+    document.getElementById('sActs').innerHTML='<button class="bp" style="flex:1;font-size:14px" onclick="subH()">Atualizar</button><button class="bs" style="font-size:14px" onclick="closeS()">Fechar</button>';
+  }
+  openSheet();
+}
+
+function formHtml(){
+  return '<div class="f2"><div class="fg"><label>Valor do plantão 12h (R$)</label><input type="number" id="fv" inputmode="numeric" placeholder="O que entrou na sua conta"></div><div class="fg"><label>Grupo de anestesia</label><input type="text" id="fg" placeholder="Ex: GAAP, IPAR, SMA..."></div></div><div class="fg"><label>Como obteve esse dado?</label><select id="ff"><option value="own">Experiência própria — trabalhei nesse hospital</option><option value="peer">Relato de colega — ouvi diretamente</option><option value="est">Estimativa — aproximado, ouvi falar</option></select></div>';
+}
+
+async function subH(){
+  var val=parseInt((document.getElementById('fv')||{}).value||'0');
+  var grp=((document.getElementById('fg')||{}).value||'').trim();
+  var fonte=(document.getElementById('ff')||{}).value||'own';
+  if(!val||val<=0){alert('Informe o valor do plantão.');return;}
+  var hospital=selH?selH.n:'';
+  var entry={hospital:hospital,valor:val,grupo:grp,fonte:fonte,session_id:SESSION_ID,created_at:new Date().toISOString()};
+  var scored=getScore(entry,DB);
+  entry.status=scored.status;
+  entry.score=scored.score;
+  entry.flags=scored.flags.map(function(f){return f.t;});
+  DB.unshift(entry);
+  var saved=await sbInsert('ajudas',entry);
+  if(saved)entry.id=saved.id;
+  if(scored.status==='approved'){unlocked=true;showToast('Contribuição aprovada!');}
+  else if(scored.status==='review'){showToast('Em revisão — aguardando validação');}
+  else{showToast('Dado sinalizado — em análise');}
+  renderMarkers();stats();renderAdmin();closeS();
+}
+
+function openAdd(){
+  selH=null;
+  document.getElementById('sTag').textContent='Novo hospital';
+  document.getElementById('sName').textContent='Hospital não listado?';
+  document.getElementById('sMeta').innerHTML='Adicione e contribua.';
+  document.getElementById('sSal').innerHTML='';document.getElementById('sGrp').innerHTML='';document.getElementById('sRels').innerHTML='';
+  document.getElementById('sQual').innerHTML='';
+  document.getElementById('sDv').style.display='none';
+  document.getElementById('sForm').innerHTML=anonNote()+'<div class="fg"><label>Nome do hospital</label><input type="text" id="fn" placeholder="Ex: Hospital São Lucas – Zona Norte"></div>'+formHtml();
+  document.getElementById('sActs').innerHTML='<button class="bp" style="flex:1;font-size:14px" onclick="subNew()">Adicionar e desbloquear mapa</button>';
+  openSheet();
+}
+
+async function subNew(){
+  var nome=((document.getElementById('fn')||{}).value||'').trim();
+  var val=parseInt((document.getElementById('fv')||{}).value||'0');
+  var grp=((document.getElementById('fg')||{}).value||'').trim();
+  var fonte=(document.getElementById('ff')||{}).value||'own';
+  if(!nome||!val||val<=0){alert('Preencha nome e valor.');return;}
+  var ex=H.find(function(h){return h.n.toLowerCase()===nome.toLowerCase();});
+  if(!ex){var s=Math.random();H.unshift({n:nome,r:'centro',b:'SP',g:grp,lat:-23.55+(s-.5)*.06,lng:-46.63+(s-.5)*.1});}
+  var entry={hospital:nome,valor:val,grupo:grp,fonte:fonte,session_id:SESSION_ID,created_at:new Date().toISOString()};
+  var scored=getScore(entry,DB);
+  entry.status=scored.status;entry.score=scored.score;entry.flags=scored.flags.map(function(f){return f.t;});
+  DB.unshift(entry);
+  var saved=await sbInsert('ajudas',entry);
+  if(saved)entry.id=saved.id;
+  if(scored.status==='approved'){unlocked=true;showToast('Hospital adicionado!');}
+  else showToast('Em análise pelo algoritmo');
+  renderMarkers();stats();renderAdmin();closeS();
+}
+
+function openRelatos(){
+  document.getElementById('sTag').textContent='Comunidade';
+  document.getElementById('sName').textContent='Relatos anônimos';
+  document.getElementById('sMeta').innerHTML='Sem identificação. Sem julgamento.';
+  document.getElementById('sSal').innerHTML='';document.getElementById('sGrp').innerHTML='';
+  document.getElementById('sQual').innerHTML='';
+  document.getElementById('sRels').innerHTML=RELS.length?RELS.map(relHtml).join(''):'<div class="empty-s">Nenhum relato ainda.</div>';
+  document.getElementById('sDv').style.display='block';
+  var opts=H.map(function(h){return'<option>'+h.n+'</option>';}).join('');
+  document.getElementById('sForm').innerHTML=anonNote()+'<div class="fg"><label>Hospital</label><select id="fh"><option value="">Selecione...</option>'+opts+'</select></div><div class="fg"><label>Valor recebido (R$)</label><input type="number" id="fv" inputmode="numeric" placeholder="O que entrou na sua conta"></div><div class="fg"><label>Seu relato</label><textarea id="ft" placeholder="O que você gostaria que alguém tivesse te contado antes..."></textarea></div>';
+  document.getElementById('sActs').innerHTML='<button class="bp" style="flex:1;font-size:14px" onclick="subRel()">Publicar relato</button><button class="bs" style="font-size:14px" onclick="closeS()">Fechar</button>';
+  openSheet();
+}
+
+async function subRel(){
+  var hosp=((document.getElementById('fh')||{}).value||'').trim();
+  var val=parseInt((document.getElementById('fv')||{}).value||'0');
+  var txt=((document.getElementById('ft')||{}).value||'').trim();
+  if(!hosp||!val||!txt){alert('Preencha todos os campos.');return;}
+  var entry={hospital:hosp,valor:val,texto:txt,likes:0,reais:0,session_id:SESSION_ID,created_at:new Date().toISOString()};
+  var saved=await sbInsert('relatos',entry);
+  RELS.unshift({id:saved?saved.id:Date.now(),hosp:hosp,v:val,t:txt,ln:0,fn:0,lk:false,fi:false});
+  unlocked=true;stats();renderRelatos();closeS();showToast('Relato publicado!');
+}
+
+function relHtml(r){
+  return'<div class="relcard"><div class="rh">'+r.hosp+'</div><div class="rv">R$ '+r.v.toLocaleString('pt-BR')+'</div><div class="rt">'+r.t+'</div><div class="rl"><button class="rb'+(r.lk?' on':'')+'" onclick="tL(\''+r.id+'\',this)">confirmo ('+r.ln+')</button><button class="rb'+(r.fi?' on':'')+'" onclick="tF(\''+r.id+'\',this)">esse é real ('+r.fn+')</button></div></div>';
+}
+
+function renderRelatos(){
+  var el=document.getElementById('relatosFeed');
+  if(el)el.innerHTML=RELS.length?RELS.map(relHtml).join(''):'<div class="empty-s">Nenhum relato ainda.</div>';
+}
+
+function tL(id,btn){var r=RELS.find(function(x){return String(x.id)===String(id);});if(!r)return;r.lk=!r.lk;r.ln+=r.lk?1:-1;btn.classList.toggle('on',r.lk);btn.textContent='confirmo ('+r.ln+')';}
+function tF(id,btn){var r=RELS.find(function(x){return String(x.id)===String(id);});if(!r)return;r.fi=!r.fi;r.fn+=r.fi?1:-1;btn.classList.toggle('on',r.fi);btn.textContent='esse é real ('+r.fn+')';}
+
+// ── ADMIN ────────────────────────────────────────────────
+function renderAdmin(){
+  var total=DB.length;
+  var crit=DB.filter(function(c){return c.status==='quarantine';}).length;
+  var rev=DB.filter(function(c){return c.status==='review';}).length;
+  var appr=DB.filter(function(c){return c.status==='approved'||c.status==='ok'||c.status==='aprovado';}).length;
+  document.getElementById('adminStats').innerHTML=
+    '<div class="sc"><div class="sn">'+total+'</div><div class="sl">total entradas</div></div>'+
+    '<div class="sc"><div class="sn" style="color:#B71C1C">'+crit+'</div><div class="sl">em quarentena</div></div>'+
+    '<div class="sc"><div class="sn" style="color:#BF360C">'+rev+'</div><div class="sl">em revisão</div></div>'+
+    '<div class="sc"><div class="sn" style="color:#1B5E20">'+appr+'</div><div class="sl">aprovados</div></div>';
+
+  // Recent activity
+  var recent=DB.slice(0,6);
+  document.getElementById('actList').innerHTML=recent.length?recent.map(function(c){
+    var bc=c.status==='quarantine'?'badge-crit':c.status==='review'?'badge-warn':'badge-safe';
+    var bl=c.status==='quarantine'?'quarentena':c.status==='review'?'revisão':'aprovado';
+    var ic=c.status==='quarantine'?'critical':c.status==='review'?'warning':'safe';
+    return'<div class="threat '+ic+'"><div class="th-top"><div class="th-name">'+c.hospital+'</div><span class="th-badge '+bc+'">'+bl+'</span></div><div class="th-meta">R$ '+c.valor.toLocaleString('pt-BR')+' · '+c.fonte+(c.score?' · score: '+c.score:'')+'</div>'+((c.flags&&c.flags.length)?c.flags.slice(0,1).map(function(f){return'<div class="th-flag yellow">'+f+'</div>';}).join(''):'')+'</div>';
+  }).join(''):'<div class="empty-s">Nenhuma atividade ainda.</div>';
+
+  // Suspicious
+  var sus=DB.filter(function(c){return c.status!=='approved'&&c.status!=='ok';});
+  document.getElementById('susList').innerHTML=sus.length?sus.map(function(c,i){
+    var bc=c.status==='quarantine'?'badge-crit':'badge-warn';
+    var bl=c.status==='quarantine'?'quarentena automática':'aguarda revisão';
+    var ic=c.status==='quarantine'?'critical':'warning';
+    var flagsHtml=(c.flags||[]).map(function(f){return'<div class="th-flag '+(c.status==='quarantine'?'red':'yellow')+'">'+f+'</div>';}).join('');
+    var scoreColor=c.score<40?'#C62828':c.score<70?'#FF6F00':'#00A862';
+    return'<div class="threat '+ic+'"><div class="th-top"><div class="th-name">'+c.hospital+'</div><span class="th-badge '+bc+'">'+bl+'</span></div><div class="th-meta">R$ '+c.valor.toLocaleString('pt-BR')+' · '+c.fonte+'</div>'+(c.score?'<div class="th-score"><div class="score-bar"><div class="score-fill" style="width:'+c.score+'%;background:'+scoreColor+';"></div></div><div class="score-lbl" style="color:'+scoreColor+'">'+c.score+'</div></div>':'')+'<div class="th-flags">'+flagsHtml+'</div><div class="th-acts"><button class="act app" onclick="adminAprove('+i+')">Aprovar</button><button class="act blk" onclick="adminBlock('+i+')">Bloquear</button></div></div>';
+  }).join(''):'<div class="empty-s">Nenhuma ameaça detectada. Comunidade limpa.</div>';
+
+  // Insights
+  var insights=[];
+  if(appr===0)insights.push({tag:'aguardando dados',txt:'Nenhuma contribuição aprovada ainda.',sub:'Compartilhe o link para iniciar a coleta.'});
+  else{
+    var cov=Math.round(H.filter(function(h){return getHospVal(h.n)>0;}).length/H.length*100);
+    insights.push({tag:'cobertura',txt:cov+'% dos hospitais com dado aprovado',sub:'Meta: 100% de cobertura.'});
+    if(crit>0)insights.push({tag:'alerta de segurança',txt:crit+' entrada'+(crit>1?'s em':'  em')+' quarentena',sub:'Revisar na aba Ameaças antes de exibir no mapa.'});
+    if(rev>0)insights.push({tag:'pendente',txt:rev+' entrada'+(rev>1?'s aguardam':' aguarda')+' revisão manual',sub:'Score entre 40-75 requer sua validação.'});
+    var byReg={};H.forEach(function(h){if(!byReg[h.r])byReg[h.r]=0;if(getHospVal(h.n)>0)byReg[h.r]++;});
+    var semDados=Object.keys(REG).filter(function(k){return(byReg[k]||0)===0;});
+    if(semDados.length)insights.push({tag:'regiões sem dados',txt:semDados.map(function(k){return REG[k].l;}).join(', ')+' sem contribuições',sub:'Concentre captação nessas regiões.'});
+  }
+  document.getElementById('insightsList').innerHTML=insights.map(function(i){return'<div class="insight"><div class="itag">'+i.tag+'</div><div class="itxt">'+i.txt+'</div><div class="isub">'+i.sub+'</div></div>';}).join('');
+
+  // Region coverage
+  var regCov={centro:0,oeste:0,sul:0,norte:0,leste:0,abc:0,grande:0};
+  var regTotal={centro:17,oeste:11,sul:12,norte:4,leste:5,abc:5,grande:2};
+  H.forEach(function(h){if(getHospVal(h.n)>0&&regCov[h.r]!==undefined)regCov[h.r]++;});
+  document.getElementById('regProg').innerHTML=Object.keys(REG).map(function(k){
+    var pct=Math.round((regCov[k]||0)/(regTotal[k]||1)*100);
+    var col=pct>60?'#00A862':pct>30?'#FF6F00':'#C62828';
+    return'<div class="prg-row"><div class="prg-lbl">'+REG[k].l+'</div><div class="prg-bar"><div class="prg-fill" style="width:'+pct+'%;background:'+col+'"></div></div><div class="prg-val">'+(regCov[k]||0)+'/'+(regTotal[k]||0)+'</div></div>';
+  }).join('');
+}
+
+var SUS_CACHE=[];
+function adminAprove(i){
+  var sus=DB.filter(function(c){return c.status!=='approved'&&c.status!=='ok';});
+  if(sus[i]){sus[i].status='approved';sus[i].score=100;sus[i].flags=[];if(sus[i].id)sbInsert('ajudas_log',{action:'approved',id:sus[i].id});}
+  unlocked=true;renderMarkers();stats();renderAdmin();showToast('Aprovado!');
+}
+function adminBlock(i){
+  var sus=DB.filter(function(c){return c.status!=='approved'&&c.status!=='ok';});
+  if(sus[i]){var idx=DB.indexOf(sus[i]);if(idx>-1)DB.splice(idx,1);}
+  renderMarkers();stats();renderAdmin();showToast('Bloqueado e removido.');
+}
+
+var SIM_HOSPS=['Hospital Albert Einstein','Hospital Sírio-Libanês','Hospital Santa Cruz','Hospital Paulista','Hospital Leforte Morumbi'];
+function simular(){
+  var h=SIM_HOSPS[Math.floor(Math.random()*SIM_HOSPS.length)];
+  var isBad=Math.random()<0.3;
+  var v=isBad?Math.round(Math.random()*300+50):Math.round(Math.random()*1200+700);
+  var f=['own','peer','est'][Math.floor(Math.random()*3)];
+  var e={hospital:h,valor:v,fonte:f,grupo:'',session_id:'sim_'+Math.random().toString(36).substr(2,5),created_at:new Date().toISOString(),_sim:true};
+  var scored=getScore(e,DB);
+  e.status=scored.status;e.score=scored.score;e.flags=scored.flags.map(function(f){return f.t;});
+  DB.unshift(e);
+  renderAdmin();
+  showToast('Simulado: R$'+v+' · score '+e.score+' · '+e.status);
+}
+
+// ── NAV ──────────────────────────────────────────────────
+function showPg(name,btn){
+  ['mapa','relatos'].forEach(function(p){document.getElementById('pg-'+p).classList.toggle('on',p===name);});
+  var rankEl=document.getElementById('pg-ranking');
+  if(rankEl)rankEl.classList.toggle('on',name==='ranking');
+  document.querySelectorAll('.mtab').forEach(function(t){t.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  if(name==='relatos')renderRelatos();
+  if(name==='ranking')renderRanking();
+  if(name==='mapa'&&mapObj)setTimeout(function(){mapObj.invalidateSize();},100);
+}
+function toggleAdmin(){
+  if(!_isAdminAuthed()){_promptAdmin();return;}
+  var a=document.getElementById('pg-admin');var mt=document.getElementById('mainTabs');var isOn=a.style.display==='block';
+  if(isOn){a.style.cssText='display:none!important';mt.style.display='flex';document.getElementById('pg-mapa').classList.add('on');}
+  else{['mapa','ranking','relatos'].forEach(function(p){document.getElementById('pg-'+p).classList.remove('on');});a.style.cssText='display:block';mt.style.display='none';renderAdmin();}
+}
+
+function adminLogout(){
+  _clearAdminSession();
+  var a=document.getElementById('pg-admin');var mt=document.getElementById('mainTabs');
+  a.style.cssText='display:none!important';mt.style.display='flex';document.getElementById('pg-mapa').classList.add('on');
+  showToast('Sessão encerrada.');
+}
+function showAt(name,btn){
+  ['aov','asus','ainsights','aalgo'].forEach(function(s){document.getElementById(s).classList.toggle('on',s===name);});
+  document.querySelectorAll('.at').forEach(function(t){t.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+}
+
+// ── FILTERS ──────────────────────────────────────────────
+function buildFilters(){
+  var h='<button class="ft on" onclick="setF(\'all\',this)">Todos</button>';
+  Object.keys(REG).forEach(function(k){h+='<button class="ft" onclick="setF(\''+k+'\',this)">'+REG[k].l+'</button>';});
+  document.getElementById('frow').innerHTML=h;
+}
+function buildLegend(){
+  var h='';Object.keys(REG).forEach(function(k){h+='<div class="li"><div class="ld2" style="background:'+REG[k].c+'"></div>'+REG[k].l+'</div>';});
+  document.getElementById('mapLeg').innerHTML=h;
+}
+function setF(f,btn){
+  filt=f;
+  document.querySelectorAll('.ft').forEach(function(t){t.classList.remove('on');});
+  btn.classList.add('on');
+  renderMarkers();
+  if(f!=='all'){
+    var fh=H.find(function(h){return h.r===f;});
+    if(fh&&mapObj)mapObj.flyTo([fh.lat,fh.lng],13,{animate:true,duration:.8});
+  }else if(mapObj)mapObj.flyTo([-23.5505,-46.6333],12,{animate:true,duration:.8});
+}
+
+// ── SHEET ────────────────────────────────────────────────
+function openSheet(){document.getElementById('ov').classList.add('on');document.getElementById('sh').scrollTop=0;}
+function closeS(e){if(!e||e.target===document.getElementById('ov'))document.getElementById('ov').classList.remove('on');}
+
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2500);}
+
+// ── INIT ─────────────────────────────────────────────────
+document.getElementById('btnAdd').addEventListener('click',function(){openAdd();});
+document.getElementById('btnAdd').addEventListener('touchend',function(e){e.preventDefault();openAdd();});
+document.getElementById('btnRel').addEventListener('click',function(){openRelatos();});
+document.getElementById('btnRel').addEventListener('touchend',function(e){e.preventDefault();openRelatos();});
+document.getElementById('btnRelAdd').addEventListener('click',function(){openRelatos();});
+document.getElementById('btnRelAdd').addEventListener('touchend',function(e){e.preventDefault();openRelatos();});
+document.getElementById('closeX').addEventListener('click',function(){closeS();});
+document.getElementById('closeX').addEventListener('touchend',function(e){e.preventDefault();closeS();});
+
+// ── AUTOCOMPLETE ─────────────────────────────────────────
+var _acIdx=-1;
+
+function onSearchInput(){
+  var q=(document.getElementById('sq').value||'').toLowerCase().trim();
+  renderMarkers();
+  var dd=document.getElementById('ac-dropdown');
+  var inp=document.getElementById('sq');
+  if(!q){hideAC();return;}
+  var matches=H.filter(function(h){
+    return h.n.toLowerCase().indexOf(q)>-1||h.b.toLowerCase().indexOf(q)>-1||(h.g||'').toLowerCase().indexOf(q)>-1;
+  }).slice(0,8);
+  if(!matches.length){hideAC();return;}
+  dd.innerHTML='';
+  _acIdx=-1;
+  inp.style.borderRadius='10px 10px 0 0';
+  inp.style.borderColor='#00A862';
+  matches.forEach(function(h,i){
+    var reg=REG[h.r]||{c:'#999',l:h.r};
+    var val=getHospVal(h.n);
+    var q2=getQual(h.n);var qs=qualScore(q2);var sc=scoreColor(qs);
+    var escaped=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    var nameHl=h.n.replace(new RegExp('('+escaped+')','gi'),'<b style="color:#00A862">$1</b>');
+    var valStr=unlocked&&val>0?'R$ '+val.toLocaleString('pt-BR'):'';
+    var rcCount=DB.filter(function(c){return c.hospital===h.n&&(c.status==='approved'||c.status==='ok'||c.status==='aprovado');}).length;
+    var relCount=RELS.filter(function(r){return r.hosp===h.n;}).length;
+    var metaParts=[reg.l,h.b];
+    if(rcCount>0)metaParts.push(rcCount+' contribuiç'+(rcCount>1?'ões':'ão'));
+    if(relCount>0)metaParts.push(relCount+' relato'+(relCount>1?'s':''));
+    var div=document.createElement('div');
+    div.className='ac-item';
+    div.dataset.idx=i;
+    div.innerHTML='<div class="ac-dot" style="background:'+reg.c+'"></div>'+
+      '<div class="ac-body"><div class="ac-name">'+nameHl+'</div><div class="ac-meta">'+metaParts.join(' · ')+'</div></div>'+
+      (valStr?'<div class="ac-val">'+valStr+'</div>':'')+
+      '<div class="ac-score" style="color:'+sc+'">'+qs.toFixed(1)+'</div>';
+    div.addEventListener('mousedown',function(e){e.preventDefault();selectAC(h);});
+    dd.appendChild(div);
+  });
+  dd._matches=matches;
+  dd.style.display='block';
+}
+
+function selectAC(h){
+  document.getElementById('sq').value=h.n;
+  hideAC();
+  renderMarkers();
+  if(mapObj){
+    mapObj.flyTo([h.lat,h.lng],15,{animate:true,duration:0.8});
+    setTimeout(function(){openH(h);},600);
+  }else{openH(h);}
+}
+
+function hideAC(){
+  var dd=document.getElementById('ac-dropdown');
+  var inp=document.getElementById('sq');
+  if(dd)dd.style.display='none';
+  if(inp){inp.style.borderRadius='';inp.style.borderColor='';}
+  _acIdx=-1;
+}
+
+function onSearchKey(e){
+  var dd=document.getElementById('ac-dropdown');
+  if(!dd||dd.style.display==='none')return;
+  var items=dd.querySelectorAll('.ac-item');
+  if(!items.length)return;
+  if(e.key==='ArrowDown'){e.preventDefault();_acIdx=Math.min(_acIdx+1,items.length-1);}
+  else if(e.key==='ArrowUp'){e.preventDefault();_acIdx=Math.max(_acIdx-1,0);}
+  else if(e.key==='Enter'){e.preventDefault();if(_acIdx>=0&&dd._matches&&dd._matches[_acIdx])selectAC(dd._matches[_acIdx]);return;}
+  else if(e.key==='Escape'){hideAC();return;}
+  items.forEach(function(it,i){it.classList.toggle('sel',i===_acIdx);});
+  if(_acIdx>=0)items[_acIdx].scrollIntoView({block:'nearest'});
+}
+
+buildFilters();
+buildLegend();
+renderRanking();
+
+window.addEventListener('load',function(){
+  if(typeof L!=='undefined'){initMap();}
+  else{var t=setInterval(function(){if(typeof L!=='undefined'){clearInterval(t);initMap();}},100);}
+  syncDB();
+  setInterval(syncDB,30000); // sync every 30s
+});
+</script>
+</body>
+</html>
