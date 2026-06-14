@@ -18,8 +18,6 @@ html,body{background:#fff!important;color:#111!important;font-family:-apple-syst
 .ld{width:7px;height:7px;border-radius:50%;background:#00A862;animation:blink 2s infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 .admin-btn{display:none!important;}
-/* SEGURANÇA: botão admin removido do HTML — acesso via logo 7x cliques */
-
 
 .main-tabs{display:flex;border-bottom:1px solid #E0E0E0;background:#fff;position:sticky;top:52px;z-index:998;}
 .mtab{flex:1;padding:10px;font-size:13px;font-weight:500;color:#666;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;}
@@ -42,7 +40,7 @@ html,body{background:#fff!important;color:#111!important;font-family:-apple-syst
 .nn{font-size:22px;font-weight:800;color:#00A862;}
 
 .ctrl{background:#fff;padding:10px 18px;border-bottom:1px solid #E0E0E0;position:sticky;top:94px;z-index:997;}
-.si{width:100%;border:1.5px solid #E0E0E0;border-radius:10px;padding:9px 14px;font-size:14px;color:#111;background:#F5F5F5;outline:none;-webkit-appearance:none;font-family:inherit;margin-bottom:8px;}
+.si{width:100%;border:1.5px solid #E0E0E0;border-radius:10px;padding:9px 14px;font-size:16px;color:#111;background:#F5F5F5;outline:none;-webkit-appearance:none;font-family:inherit;margin-bottom:8px;}
 .si:focus{border-color:#00A862;background:#fff;}
 .si::placeholder{color:#AAA;}
 .ftags{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
@@ -67,10 +65,11 @@ html,body{background:#fff!important;color:#111!important;font-family:-apple-syst
 .li{display:flex;align-items:center;gap:5px;font-size:11px;color:#666;}
 .ld2{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 
+/* ── BOTTOM BAR — mobile touch targets ────────────────── */
 .bbar{padding:10px 18px;background:#fff;border-top:1px solid #E0E0E0;display:flex;gap:8px;position:sticky;bottom:0;z-index:999;}
-.bp{flex:2;background:#00A862;color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;touch-action:manipulation;}
+.bp{flex:2;background:#00A862;color:#fff;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;touch-action:manipulation;min-height:50px;}
 .bp:active{background:#007A49;}
-.bs{flex:1;background:#fff;color:#111;border:1.5px solid #E0E0E0;border-radius:10px;padding:13px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;touch-action:manipulation;}
+.bs{flex:1;background:#fff;color:#111;border:1.5px solid #E0E0E0;border-radius:10px;padding:14px;font-size:15px;font-weight:500;font-family:inherit;cursor:pointer;touch-action:manipulation;min-height:50px;}
 .bs:active{background:#F5F5F5;}
 
 /* RELATOS PAGE */
@@ -99,7 +98,6 @@ html,body{background:#fff!important;color:#111!important;font-family:-apple-syst
 .sn{font-size:22px;font-weight:700;color:#111;}
 .sl{font-size:11px;color:#666;margin-top:2px;}
 
-/* THREAT CARDS */
 .threat{border:1px solid #E0E0E0;border-radius:10px;padding:12px;margin-bottom:8px;background:#fff;}
 .threat.critical{border-color:#FFCDD2;background:#FFF5F5;}
 .threat.warning{border-color:#FFE0B2;background:#FFFBF5;}
@@ -149,7 +147,7 @@ html,body{background:#fff!important;color:#111!important;font-family:-apple-syst
 .ov.on{display:flex;align-items:flex-end;justify-content:center;}
 .sh{background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
 .sh-drag{width:38px;height:4px;background:#E0E0E0;border-radius:4px;margin:12px auto 0;}
-.close-x{position:absolute;top:14px;right:18px;width:30px;height:30px;border-radius:50%;background:#F5F5F5;border:none;font-size:18px;color:#666;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation;}
+.close-x{position:absolute;top:14px;right:18px;width:36px;height:36px;border-radius:50%;background:#F5F5F5;border:none;font-size:20px;color:#666;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation;}
 .sb{padding:18px 18px 32px;}
 .stag{font-size:11px;font-weight:600;color:#00A862;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px;}
 .sname{font-size:20px;font-weight:800;color:#111;line-height:1.2;margin-bottom:4px;}
@@ -167,12 +165,14 @@ html,body{background:#fff!important;color:#111!important;font-family:-apple-syst
 .grpmt{font-size:13px;color:#AAA;font-style:italic;}
 .relhdr{font-size:13px;font-weight:600;color:#111;margin-bottom:8px;}
 .sdiv{height:1px;background:#E0E0E0;margin:14px 0;}
+
+/* ── FORM — mobile-friendly inputs ───────────────────── */
 .fg{margin-bottom:12px;}
 .fg label{display:block;font-size:13px;font-weight:500;color:#555;margin-bottom:5px;}
-.fg input,.fg select,.fg textarea{width:100%;border:1.5px solid #E0E0E0;border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:#111;background:#fff;outline:none;-webkit-appearance:none;}
+.fg input,.fg select,.fg textarea{width:100%;border:1.5px solid #E0E0E0;border-radius:10px;padding:14px;font-size:16px;font-family:inherit;color:#111;background:#fff;outline:none;-webkit-appearance:none;}
 .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:#00A862;}
 .fg input::placeholder,.fg textarea::placeholder{color:#AAA;}
-.fg textarea{min-height:68px;resize:none;}
+.fg textarea{min-height:80px;resize:none;}
 .f2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .sacts{display:flex;gap:8px;margin-top:8px;}
 .disc{font-size:11px;color:#AAA;padding:10px 18px 18px;border-top:1px solid #E0E0E0;line-height:1.6;}
@@ -180,7 +180,9 @@ html,body{background:#fff!important;color:#111!important;font-family:-apple-syst
 .toast.on{opacity:1;}
 .empty-s{text-align:center;padding:22px;color:#666;font-size:13px;line-height:1.6;}
 .sim-btn{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid #E0E0E0;background:#fff;color:#666;cursor:pointer;font-family:inherit;}
-.ac-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid #F5F5F5;transition:background .1s;}
+
+/* AUTOCOMPLETE */
+.ac-item{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;border-bottom:1px solid #F5F5F5;transition:background .1s;}
 .ac-item:last-child{border-bottom:none;}
 .ac-item:hover,.ac-item.sel{background:#F5F5F5;}
 .ac-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
@@ -190,6 +192,8 @@ html,body{background:#fff!important;color:#111!important;font-family:-apple-syst
 .ac-meta{font-size:11px;color:#888;margin-top:1px;}
 .ac-score{font-size:13px;font-weight:700;flex-shrink:0;}
 .ac-val{font-size:11px;color:#666;flex-shrink:0;}
+
+/* TRUST / QUAL */
 .trust-banner{background:#E6F5EE;border-bottom:1px solid #B2DFCC;padding:9px 18px;display:flex;align-items:center;gap:10px;}
 .trust-banner p{font-size:12px;color:#005C35;flex:1;line-height:1.4;}
 .anon-note{background:#E6F5EE;border-radius:8px;padding:9px 12px;margin-bottom:12px;display:flex;align-items:flex-start;gap:8px;}
@@ -208,6 +212,8 @@ html,body{background:#fff!important;color:#111!important;font-family:-apple-syst
 .popup-score-bar{flex:1;height:4px;background:#E8E8E8;border-radius:4px;overflow:hidden;}
 .popup-score-fill{height:100%;border-radius:4px;}
 .popup-score-lbl{font-size:11px;font-weight:600;min-width:24px;}
+
+/* RANKING */
 .rank-hero{padding:18px 18px 14px;border-bottom:1px solid #E0E0E0;}
 .rank-hero h2{font-size:20px;font-weight:800;color:#111;margin-bottom:4px;}
 .rank-hero p{font-size:13px;color:#666;line-height:1.5;}
@@ -233,6 +239,42 @@ html,body{background:#fff!important;color:#111!important;font-family:-apple-syst
 .rdl{display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .rdl-dot{width:10px;height:3px;border-radius:2px;}
 .rdl span{font-size:10px;color:#888;}
+
+/* ── SHARE MODAL ─────────────────────────────────────── */
+.share-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;align-items:center;justify-content:center;padding:18px;}
+.share-ov.on{display:flex;}
+.share-card{background:#fff;border-radius:16px;width:100%;max-width:360px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.25);}
+.share-header{background:#00A862;padding:18px;color:#fff;}
+.share-brand{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.8;margin-bottom:4px;}
+.share-hname{font-size:17px;font-weight:800;line-height:1.2;margin-bottom:2px;}
+.share-hreg{font-size:12px;opacity:.75;}
+.share-body{padding:16px 18px;}
+.share-val-row{display:flex;align-items:baseline;gap:6px;margin-bottom:14px;}
+.share-val{font-size:36px;font-weight:800;color:#00A862;line-height:1;}
+.share-val-sub{font-size:12px;color:#888;}
+.share-dims{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.share-dim{background:#F5F5F5;border-radius:8px;padding:9px 10px;}
+.share-dim-lbl{font-size:10px;color:#888;margin-bottom:3px;}
+.share-dim-val{font-size:16px;font-weight:700;color:#111;}
+.share-dim-bar{height:3px;background:#E0E0E0;border-radius:2px;margin-top:4px;overflow:hidden;}
+.share-dim-fill{height:3px;border-radius:2px;}
+.share-footer{font-size:11px;color:#AAA;text-align:center;padding-bottom:6px;}
+.share-actions{display:flex;gap:8px;padding:0 18px 18px;}
+.share-wa{flex:2;background:#25D366;color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;touch-action:manipulation;}
+.share-cp{flex:1;background:#fff;color:#111;border:1.5px solid #E0E0E0;border-radius:10px;padding:13px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;touch-action:manipulation;}
+.share-close{display:block;width:100%;padding:10px;text-align:center;font-size:13px;color:#888;cursor:pointer;border:none;background:none;font-family:inherit;padding-bottom:14px;}
+
+/* ── MOBILE RESPONSIVE ───────────────────────────────── */
+@media (max-width:480px){
+  #map{height:340px;}
+  .hero h1{font-size:22px;}
+  .f2{grid-template-columns:1fr;}
+  .sacts{flex-direction:column;}
+  .sacts .bp,.sacts .bs{width:100%;text-align:center;}
+  .fg input,.fg select,.fg textarea{font-size:16px;padding:14px;}
+  .ft{min-height:36px;display:flex;align-items:center;}
+  .share-card{border-radius:14px;}
+}
 </style>
 </head>
 <body>
@@ -250,14 +292,38 @@ html,body{background:#fff!important;color:#111!important;font-family:-apple-syst
     <div style="font-size:14px;font-weight:700;color:#111;margin-bottom:4px;">Acesso restrito</div>
     <div style="font-size:12px;color:#888;margin-bottom:16px;">Painel de administração AnestLab</div>
     <input id="adminPwInput" type="password" placeholder="Senha de acesso" onkeydown="_adminKeydown(event)"
-      style="width:100%;border:1.5px solid #E0E0E0;border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:#111;background:#fff;outline:none;-webkit-appearance:none;margin-bottom:8px;">
+      style="width:100%;border:1.5px solid #E0E0E0;border-radius:10px;padding:14px;font-size:16px;font-family:inherit;color:#111;background:#fff;outline:none;-webkit-appearance:none;margin-bottom:8px;">
     <div id="adminAuthErr" style="font-size:11px;color:#C62828;min-height:16px;margin-bottom:10px;"></div>
     <div style="display:flex;gap:8px;">
       <button onclick="document.getElementById('adminAuthModal').style.display='none'"
-        style="flex:1;padding:10px;font-size:13px;border:1.5px solid #E0E0E0;border-radius:10px;background:#fff;color:#666;cursor:pointer;font-family:inherit;">Cancelar</button>
+        style="flex:1;padding:12px;font-size:14px;border:1.5px solid #E0E0E0;border-radius:10px;background:#fff;color:#666;cursor:pointer;font-family:inherit;">Cancelar</button>
       <button onclick="_submitAdminAuth()"
-        style="flex:2;padding:10px;font-size:13px;font-weight:600;border:none;border-radius:10px;background:#111;color:#fff;cursor:pointer;font-family:inherit;">Entrar</button>
+        style="flex:2;padding:12px;font-size:14px;font-weight:600;border:none;border-radius:10px;background:#111;color:#fff;cursor:pointer;font-family:inherit;">Entrar</button>
     </div>
+  </div>
+</div>
+
+<!-- SHARE MODAL -->
+<div class="share-ov" id="shareOv" onclick="closeShare(event)">
+  <div class="share-card" onclick="event.stopPropagation()">
+    <div class="share-header">
+      <div class="share-brand">AnestLab · Mapa da Anestesia SP</div>
+      <div class="share-hname" id="shareHName">Hospital</div>
+      <div class="share-hreg" id="shareHReg">Região</div>
+    </div>
+    <div class="share-body">
+      <div class="share-val-row">
+        <div class="share-val" id="shareVal">R$ —</div>
+        <div class="share-val-sub">plantão 12h<br>média da comunidade</div>
+      </div>
+      <div class="share-dims" id="shareDims"></div>
+      <div class="share-footer">mapadaanestesia.com.br</div>
+    </div>
+    <div class="share-actions">
+      <button class="share-wa" onclick="shareWhatsApp()">📲 WhatsApp</button>
+      <button class="share-cp" onclick="shareText()">Copiar</button>
+    </div>
+    <button class="share-close" onclick="closeShare()">Fechar</button>
   </div>
 </div>
 
@@ -421,7 +487,7 @@ html,body{background:#fff!important;color:#111!important;font-family:-apple-syst
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script>
-// ── CONFIG (fragmentada — não editar ordem) ───────────────
+// ── CONFIG ────────────────────────────────────────────────
 (function(){
   var _a=['https://','erouldsys','azbydgcl','xrg','.supabase.co'];
   var _b=['eyJhbGci','OiJIUzI1','NiIsInR5','cCI6Ikp','XVCJ9.ey','Jpc3MiOi','JzdXBhYm','FzZSIsIn','JlZiI6Im','Vyb3VsZH','N5c2F6Yn','lkZ2NseH','JnIiwicm','9sZSI6Im','Fub24iLC','JpYXQiOj','E3NzgwNT','E4NjEsIm','V4cCI6Mj','A5MzYyNz','g2MX0.6-','5_Q0HriG','0DE3furQ','hVg1Jc8-','y_LZ3802','eXfj5T1LY'];
@@ -429,7 +495,6 @@ html,body{background:#fff!important;color:#111!important;font-family:-apple-syst
   window.__SB_KEY=_b.join('');
 })();
 
-// ── SUPABASE ─────────────────────────────────────────────
 var SB_URL=window.__SB_URL;
 var SB_KEY=window.__SB_KEY;
 delete window.__SB_URL;delete window.__SB_KEY;
@@ -437,11 +502,9 @@ delete window.__SB_URL;delete window.__SB_KEY;
 var HEADERS={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
 
 // ── ADMIN AUTH ────────────────────────────────────────────
-// Acesso: clique 7x no logo + senha
-// Hash SHA-256 da senha (não a senha em si)
-var ADMIN_HASH='d3ff4d3a2c4a2ee09c14136b02db390bbd7a3cb456289d0e36249c6469f4d4bc'; // hash SHA-256
+var ADMIN_HASH='d3ff4d3a2c4a2ee09c14136b02db390bbd7a3cb456289d0e36249c6469f4d4bc';
 var ADMIN_SESSION_KEY='alab_adm_sess';
-var ADMIN_SESSION_TTL=4*60*60*1000; // 4 horas
+var ADMIN_SESSION_TTL=4*60*60*1000;
 var _adminAttempts=0;
 var _adminLockUntil=0;
 var _logoClicks=0;
@@ -451,44 +514,25 @@ async function _sha256(msg){
   var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(msg));
   return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
 }
-
 function _isAdminAuthed(){
-  try{
-    var s=JSON.parse(sessionStorage.getItem(ADMIN_SESSION_KEY)||'null');
-    return s&&s.token&&(Date.now()-s.ts)<ADMIN_SESSION_TTL;
-  }catch(e){return false;}
+  try{var s=JSON.parse(sessionStorage.getItem(ADMIN_SESSION_KEY)||'null');return s&&s.token&&(Date.now()-s.ts)<ADMIN_SESSION_TTL;}catch(e){return false;}
 }
-
 function _setAdminSession(){
   var token=Math.random().toString(36).substr(2)+Math.random().toString(36).substr(2);
   sessionStorage.setItem(ADMIN_SESSION_KEY,JSON.stringify({token:token,ts:Date.now()}));
 }
-
-function _clearAdminSession(){
-  sessionStorage.removeItem(ADMIN_SESSION_KEY);
-}
-
+function _clearAdminSession(){sessionStorage.removeItem(ADMIN_SESSION_KEY);}
 function _handleLogoClick(){
-  _logoClicks++;
-  clearTimeout(_logoTimer);
+  _logoClicks++;clearTimeout(_logoTimer);
   _logoTimer=setTimeout(function(){_logoClicks=0;},2000);
-  if(_logoClicks>=7){
-    _logoClicks=0;
-    clearTimeout(_logoTimer);
-    _promptAdmin();
-  }
+  if(_logoClicks>=7){_logoClicks=0;clearTimeout(_logoTimer);_promptAdmin();}
 }
-
 function _promptAdmin(){
   if(_isAdminAuthed()){toggleAdmin();return;}
-  if(Date.now()<_adminLockUntil){
-    var wait=Math.ceil((_adminLockUntil-Date.now())/1000);
-    showToast('Bloqueado por '+wait+'s');return;
-  }
+  if(Date.now()<_adminLockUntil){var wait=Math.ceil((_adminLockUntil-Date.now())/1000);showToast('Bloqueado por '+wait+'s');return;}
   var modal=document.getElementById('adminAuthModal');
   if(modal){modal.style.display='flex';document.getElementById('adminPwInput').value='';document.getElementById('adminPwInput').focus();document.getElementById('adminAuthErr').textContent='';}
 }
-
 async function _submitAdminAuth(){
   var pw=(document.getElementById('adminPwInput').value||'').trim();
   if(!pw)return;
@@ -496,32 +540,22 @@ async function _submitAdminAuth(){
   if(_adminAttempts>=5){_adminLockUntil=Date.now()+60000;_adminAttempts=0;document.getElementById('adminAuthModal').style.display='none';showToast('Muitas tentativas — aguarde 60s');return;}
   var hash=await _sha256(pw);
   if(hash===ADMIN_HASH){
-    _adminAttempts=0;
-    _setAdminSession();
-    document.getElementById('adminAuthModal').style.display='none';
-    toggleAdmin();
+    _adminAttempts=0;_setAdminSession();document.getElementById('adminAuthModal').style.display='none';toggleAdmin();
   }else{
     document.getElementById('adminAuthErr').textContent='Senha incorreta ('+(5-_adminAttempts)+' tentativas restantes)';
     document.getElementById('adminPwInput').value='';
   }
 }
-
-function _adminKeydown(e){
-  if(e.key==='Enter')_submitAdminAuth();
-  if(e.key==='Escape')document.getElementById('adminAuthModal').style.display='none';
-}
+function _adminKeydown(e){if(e.key==='Enter')_submitAdminAuth();if(e.key==='Escape')document.getElementById('adminAuthModal').style.display='none';}
 
 // ── SUPABASE API ──────────────────────────────────────────
 var _apiCalls=0,_apiWindow=Date.now();
 function _rateOk(){
   if(Date.now()-_apiWindow>60000){_apiCalls=0;_apiWindow=Date.now();}
-  _apiCalls++;
-  return _apiCalls<=30; // max 30 req/min por sessão
+  _apiCalls++;return _apiCalls<=30;
 }
-
 async function sbInsert(table,data){
   if(!_rateOk()){showToast('Muitas requisições — aguarde.');return null;}
-  // Só permite INSERT em tabelas públicas; nunca expõe chave admin
   var allowed=['contribuicoes','contribui\u00e7oes','relatos','contribuicoes_log','ajudas','ajudas_log','helps','contributions'];
   if(!allowed.includes(table))return null;
   try{
@@ -529,28 +563,22 @@ async function sbInsert(table,data){
     var j=await r.json();return Array.isArray(j)?j[0]:null;
   }catch(e){return null;}
 }
-
 async function sbSelect(table,filter,order){
   if(!_rateOk())return null;
   try{
     var url=SB_URL+'/rest/v1/'+table+'?select=*'+(filter?'&'+filter:'')+(order?'&order='+order:'');
-    var r=await fetch(url,{headers:HEADERS});
-    return await r.json();
+    var r=await fetch(url,{headers:HEADERS});return await r.json();
   }catch(e){return null;}
 }
 
 // ── ALGORITMO DE SEGURANÇA ────────────────────────────────
 var SESSION_ID=Math.random().toString(36).substr(2,9);
 var SESSION_START=Date.now();
-var CONTRIB_TIMES=[];
-var BLOCKED_SESSIONS=JSON.parse(localStorage.getItem('bl_sessions')||'[]');
 
 function getScore(c,allContribs){
   var score=100;var flags=[];var level='safe';
-  // 1. Valor absurdo
   if(c.valor>4000){score-=50;flags.push({t:'Valor acima de R$4.000 — fora do padrão SP',s:'red'});}
   if(c.valor<300){score-=50;flags.push({t:'Valor abaixo de R$300 — possível erro ou teste',s:'red'});}
-  // 2. Outlier regional
   var same=allContribs.filter(function(x){return x.hospital===c.hospital&&x.status==='approved';});
   if(same.length>=3){
     var vals=same.map(function(x){return x.valor;});
@@ -559,20 +587,15 @@ function getScore(c,allContribs){
     var dev=Math.abs(c.valor-avg);
     if(dev>2*std&&std>0){score-=30;flags.push({t:'Desvio de '+(Math.round(dev/avg*100))+'% vs média do hospital (R$'+Math.round(avg).toLocaleString('pt-BR')+')',s:'yellow'});}
   }
-  // 3. Fonte estimativa com valor extremo
   if(c.fonte==='est'&&c.valor>2500){score-=20;flags.push({t:'Estimativa com valor elevado — baixa confiabilidade',s:'yellow'});}
-  // 4. Velocidade de contribuição (flood)
   var recentFromSession=allContribs.filter(function(x){return x.session_id===SESSION_ID&&(Date.now()-new Date(x.created_at).getTime())<600000;});
   if(recentFromSession.length>=10){score-=40;flags.push({t:'Múltiplas contribuições do mesmo dispositivo em <10min — possível flood',s:'red'});}
-  // 5. Tempo mínimo na plataforma
   var timeOnSite=(Date.now()-SESSION_START)/1000;
   if(timeOnSite<5&&!c._sim){score-=20;flags.push({t:'Contribuição enviada em menos de 5s — comportamento automatizado',s:'yellow'});}
-  // 6. Manipulação coordenada: muitas entradas altas no mesmo hospital recente
   var recentSameH=allContribs.filter(function(x){return x.hospital===c.hospital&&(Date.now()-new Date(x.created_at).getTime())<3600000;});
   if(recentSameH.length>=5){score-=25;flags.push({t:recentSameH.length+' entradas para o mesmo hospital na última hora — padrão suspeito',s:'yellow'});}
   score=Math.max(0,Math.min(100,score));
-  if(score<40)level='critical';
-  else if(score<70)level='warning';
+  if(score<40)level='critical';else if(score<70)level='warning';
   var status=score>=75?'approved':score>=40?'review':'quarantine';
   return{score,flags,level,status};
 }
@@ -609,7 +632,6 @@ function qualScore(q){return((q.rem+q.auto+q.infra+q.amb+q.eq)/5);}
 function scoreColor(s){if(s>=4.2)return'#00A862';if(s>=3.0)return'#FF6F00';return'#C62828';}
 
 var rankMode='geral';
-
 function renderRanking(){
   var sorted=[].concat(H);
   if(rankMode==='geral')sorted.sort(function(a,b){return qualScore(getQual(b.n))-qualScore(getQual(a.n));});
@@ -627,17 +649,11 @@ function renderRanking(){
     html+='<div class="rdims"><div class="rdim" style="background:#00A862;opacity:'+q.rem/5+'"></div><div class="rdim" style="background:#1976D2;opacity:'+q.auto/5+'"></div><div class="rdim" style="background:#7B1FA2;opacity:'+q.infra/5+'"></div><div class="rdim" style="background:#FF6F00;opacity:'+q.amb/5+'"></div></div>';
     html+='</div><div class="rscore"><div class="rscore-num" style="color:'+sc+'">'+qs.toFixed(1)+'</div><div class="rscore-lbl">/5.0</div></div></div>';
   });
-  var el=document.getElementById('rankList');
-  if(el)el.innerHTML=html;
+  var el=document.getElementById('rankList');if(el)el.innerHTML=html;
 }
-
 function showRankTab(mode,btn){
-  rankMode=mode;
-  document.querySelectorAll('.rst').forEach(function(t){t.classList.remove('on');});
-  btn.classList.add('on');
-  renderRanking();
+  rankMode=mode;document.querySelectorAll('.rst').forEach(function(t){t.classList.remove('on');});btn.classList.add('on');renderRanking();
 }
-
 function openHfromRank(name){
   var h=H.find(function(x){return x.n===name;});
   if(h){showPg('mapa',document.querySelectorAll('.mtab')[0]);openH(h);}
@@ -712,7 +728,6 @@ function initMap(){
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,attribution:'© CartoDB'}).addTo(mapObj);
   L.control.attribution({prefix:'© <a href="https://carto.com">CartoDB</a>'}).addTo(mapObj);
   markersLayer=L.layerGroup().addTo(mapObj);
-  document.getElementById('sq').addEventListener('keydown',function(e){if(e.key==='Escape')hideAC();});
   renderMarkers();
 }
 
@@ -765,7 +780,6 @@ function openHfromMap(name){
 async function syncDB(){
   document.getElementById('syncLbl').textContent='sincronizando...';
   var contribs=null;
-  // Descobre o nome correto da tabela testando as variações
   var nomes=['contribuicoes','contribui\u00e7oes','ajudas','helps','contributions'];
   for(var i=0;i<nomes.length;i++){
     try{
@@ -786,11 +800,7 @@ async function syncDB(){
   if(Array.isArray(rels)){
     RELS=rels.map(function(r){return{id:r.id,hosp:r.hospital,v:r.valor,t:r.texto,ln:r.likes||0,fn:r.reais||0,lk:false,fi:false};});
   }
-  renderMarkers();
-  stats();
-  renderRelatos();
-  renderAdmin();
-  renderRanking();
+  renderMarkers();stats();renderRelatos();renderAdmin();renderRanking();
   document.getElementById('syncLbl').textContent='online';
 }
 
@@ -801,6 +811,59 @@ function stats(){
   var approved=DB.filter(function(c){return c.status==='approved'||c.status==='ok'||c.status==='aprovado';}).length;
   document.getElementById('nC').textContent=approved;
   document.getElementById('nB').textContent=H.filter(function(h){return getHospVal(h.n)===0;}).length;
+}
+
+// ── SHARE ─────────────────────────────────────────────────
+var _shareH=null;
+function openShare(h){
+  _shareH=h;
+  var val=getHospVal(h.n);
+  var reg=REG[h.r]||{l:h.r};
+  var q=getQual(h.n);var qs=qualScore(q);var sc=scoreColor(qs);
+  document.getElementById('shareHName').textContent=h.n;
+  document.getElementById('shareHReg').textContent=reg.l+' · '+h.b;
+  document.getElementById('shareVal').textContent='R$ '+val.toLocaleString('pt-BR');
+  var dims=[
+    {l:'Remuneração',v:q.rem,c:'#00A862'},
+    {l:'Autonomia',v:q.auto,c:'#1976D2'},
+    {l:'Infraestrutura',v:q.infra,c:'#7B1FA2'},
+    {l:'Ambiente',v:q.amb,c:'#FF6F00'}
+  ];
+  document.getElementById('shareDims').innerHTML=dims.map(function(d){
+    return'<div class="share-dim"><div class="share-dim-lbl">'+d.l+'</div><div class="share-dim-val" style="color:'+d.c+'">'+d.v.toFixed(1)+'</div><div class="share-dim-bar"><div class="share-dim-fill" style="width:'+(d.v/5*100).toFixed(0)+'%;background:'+d.c+'"></div></div></div>';
+  }).join('');
+  document.getElementById('shareOv').classList.add('on');
+}
+function closeShare(e){
+  if(!e||e.target===document.getElementById('shareOv'))document.getElementById('shareOv').classList.remove('on');
+}
+function shareWhatsApp(){
+  if(!_shareH)return;
+  var val=getHospVal(_shareH.n);
+  var q=getQual(_shareH.n);var qs=qualScore(q);
+  var reg=REG[_shareH.r]||{l:_shareH.r};
+  var txt='🏥 *'+_shareH.n+'*\n'+
+    '📍 '+reg.l+' · '+_shareH.b+'\n\n'+
+    '💰 Plantão 12h: *R$ '+val.toLocaleString('pt-BR')+'*\n'+
+    '⭐ Qualidade: *'+qs.toFixed(1)+'/5.0*\n\n'+
+    'Dados da comunidade de anestesiologia SP:\n'+
+    '👉 mapadaanestesia.com.br';
+  window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
+}
+function shareText(){
+  if(!_shareH)return;
+  var val=getHospVal(_shareH.n);
+  var q=getQual(_shareH.n);var qs=qualScore(q);
+  var reg=REG[_shareH.r]||{l:_shareH.r};
+  var txt='🏥 '+_shareH.n+' | '+reg.l+'\n💰 Plantão 12h: R$ '+val.toLocaleString('pt-BR')+'\n⭐ Qualidade: '+qs.toFixed(1)+'/5.0\n👉 mapadaanestesia.com.br';
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(txt).then(function(){showToast('Copiado!');closeShare();}).catch(function(){fallbackCopy(txt);});
+  }else{fallbackCopy(txt);}
+}
+function fallbackCopy(txt){
+  var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');showToast('Copiado!');}catch(e){showToast('Copie manualmente');}
+  document.body.removeChild(ta);closeShare();
 }
 
 // ── OPEN HOSPITAL ────────────────────────────────────────
@@ -823,16 +886,17 @@ function openH(h){
   document.getElementById('sDv').style.display='block';
   if(!unlocked){
     document.getElementById('sForm').innerHTML=anonNote()+formHtml();
-    document.getElementById('sActs').innerHTML='<button class="bp" style="flex:1;font-size:14px" onclick="subH()">Contribuir e desbloquear mapa</button>';
+    document.getElementById('sActs').innerHTML='<button class="bp" style="flex:1;font-size:15px" onclick="subH()">Contribuir e desbloquear mapa</button>';
   }else{
+    var shareBtn=hasV?'<button class="bs" style="font-size:14px;min-height:50px;" onclick="closeS();setTimeout(function(){openShare(selH||{n:\''+h.n.replace(/'/g,"\\'")+'\'});},100)">📲 Compartilhar</button>':'';
     document.getElementById('sForm').innerHTML=anonNote()+'<div class="f2"><div class="fg"><label>Atualizar valor (R$)</label><input type="number" id="fv" inputmode="numeric" placeholder="Novo valor"></div><div class="fg"><label>Grupo de anestesia</label><input type="text" id="fg" value="'+(grupo||'')+'" placeholder="Nome do grupo"></div></div>';
-    document.getElementById('sActs').innerHTML='<button class="bp" style="flex:1;font-size:14px" onclick="subH()">Atualizar</button><button class="bs" style="font-size:14px" onclick="closeS()">Fechar</button>';
+    document.getElementById('sActs').innerHTML='<button class="bp" style="flex:1;font-size:15px" onclick="subH()">Atualizar</button>'+shareBtn+'<button class="bs" style="font-size:14px;min-height:50px;" onclick="closeS()">Fechar</button>';
   }
   openSheet();
 }
 
 function formHtml(){
-  return '<div class="f2"><div class="fg"><label>Valor do plantão 12h (R$)</label><input type="number" id="fv" inputmode="numeric" placeholder="O que entrou na sua conta"></div><div class="fg"><label>Grupo de anestesia</label><input type="text" id="fg" placeholder="Ex: GAAP, IPAR, SMA..."></div></div><div class="fg"><label>Como obteve esse dado?</label><select id="ff"><option value="own">Experiência própria — trabalhei nesse hospital</option><option value="peer">Relato de colega — ouvi diretamente</option><option value="est">Estimativa — aproximado, ouvi falar</option></select></div>';
+  return'<div class="f2"><div class="fg"><label>Valor do plantão 12h (R$)</label><input type="number" id="fv" inputmode="numeric" placeholder="O que entrou na sua conta"></div><div class="fg"><label>Grupo de anestesia</label><input type="text" id="fg" placeholder="Ex: GAAP, IPAR, SMA..."></div></div><div class="fg"><label>Como obteve esse dado?</label><select id="ff"><option value="own">Experiência própria — trabalhei nesse hospital</option><option value="peer">Relato de colega — ouvi diretamente</option><option value="est">Estimativa — aproximado, ouvi falar</option></select></div>';
 }
 
 async function subH(){
@@ -843,11 +907,8 @@ async function subH(){
   var hospital=selH?selH.n:'';
   var entry={hospital:hospital,valor:val,grupo:grp,fonte:fonte,session_id:SESSION_ID,created_at:new Date().toISOString()};
   var scored=getScore(entry,DB);
-  entry.status=scored.status;
-  entry.score=scored.score;
-  entry.flags=scored.flags.map(function(f){return f.t;});
+  entry.status=scored.status;entry.score=scored.score;entry.flags=scored.flags.map(function(f){return f.t;});
   DB.unshift(entry);
-  // Apenas colunas que existem: hospital, valor, grupo, fonte, status, flags, created_at
   var tb=window._TB||'contribuicoes';
   var dbEntry={hospital:hospital,valor:val,grupo:grp,fonte:fonte,status:scored.status,flags:scored.flags.map(function(f){return f.t;}),created_at:new Date().toISOString()};
   var saved=await sbInsert(tb,dbEntry);
@@ -864,10 +925,9 @@ function openAdd(){
   document.getElementById('sName').textContent='Hospital não listado?';
   document.getElementById('sMeta').innerHTML='Adicione e contribua.';
   document.getElementById('sSal').innerHTML='';document.getElementById('sGrp').innerHTML='';document.getElementById('sRels').innerHTML='';
-  document.getElementById('sQual').innerHTML='';
-  document.getElementById('sDv').style.display='none';
+  document.getElementById('sQual').innerHTML='';document.getElementById('sDv').style.display='none';
   document.getElementById('sForm').innerHTML=anonNote()+'<div class="fg"><label>Nome do hospital</label><input type="text" id="fn" placeholder="Ex: Hospital São Lucas – Zona Norte"></div>'+formHtml();
-  document.getElementById('sActs').innerHTML='<button class="bp" style="flex:1;font-size:14px" onclick="subNew()">Adicionar e desbloquear mapa</button>';
+  document.getElementById('sActs').innerHTML='<button class="bp" style="flex:1;font-size:15px" onclick="subNew()">Adicionar e desbloquear mapa</button>';
   openSheet();
 }
 
@@ -887,8 +947,7 @@ async function subNew(){
   var dbEntry={hospital:nome,valor:val,grupo:grp,fonte:fonte,status:scored.status,flags:scored.flags.map(function(f){return f.t;}),created_at:new Date().toISOString()};
   var saved=await sbInsert(tb,dbEntry);
   if(saved)entry.id=saved.id;
-  if(scored.status==='approved'){unlocked=true;showToast('Hospital adicionado!');}
-  else showToast('Em análise pelo algoritmo');
+  if(scored.status==='approved'){unlocked=true;showToast('Hospital adicionado!');}else showToast('Em análise pelo algoritmo');
   renderMarkers();stats();renderAdmin();closeS();
 }
 
@@ -896,13 +955,12 @@ function openRelatos(){
   document.getElementById('sTag').textContent='Comunidade';
   document.getElementById('sName').textContent='Relatos anônimos';
   document.getElementById('sMeta').innerHTML='Sem identificação. Sem julgamento.';
-  document.getElementById('sSal').innerHTML='';document.getElementById('sGrp').innerHTML='';
-  document.getElementById('sQual').innerHTML='';
+  document.getElementById('sSal').innerHTML='';document.getElementById('sGrp').innerHTML='';document.getElementById('sQual').innerHTML='';
   document.getElementById('sRels').innerHTML=RELS.length?RELS.map(relHtml).join(''):'<div class="empty-s">Nenhum relato ainda.</div>';
   document.getElementById('sDv').style.display='block';
   var opts=H.map(function(h){return'<option>'+h.n+'</option>';}).join('');
   document.getElementById('sForm').innerHTML=anonNote()+'<div class="fg"><label>Hospital</label><select id="fh"><option value="">Selecione...</option>'+opts+'</select></div><div class="fg"><label>Valor recebido (R$)</label><input type="number" id="fv" inputmode="numeric" placeholder="O que entrou na sua conta"></div><div class="fg"><label>Seu relato</label><textarea id="ft" placeholder="O que você gostaria que alguém tivesse te contado antes..."></textarea></div>';
-  document.getElementById('sActs').innerHTML='<button class="bp" style="flex:1;font-size:14px" onclick="subRel()">Publicar relato</button><button class="bs" style="font-size:14px" onclick="closeS()">Fechar</button>';
+  document.getElementById('sActs').innerHTML='<button class="bp" style="flex:1;font-size:15px" onclick="subRel()">Publicar relato</button><button class="bs" style="font-size:15px" onclick="closeS()">Fechar</button>';
   openSheet();
 }
 
@@ -911,15 +969,12 @@ async function subRel(){
   var val=parseInt((document.getElementById('fv')||{}).value||'0');
   var txt=((document.getElementById('ft')||{}).value||'').trim();
   if(!hosp||!val||!txt){alert('Preencha todos os campos.');return;}
-  // Apenas colunas que existem na tabela: id, hospital, valor, texto, likes, reais, created_at
   var entry={hospital:hosp,valor:val,texto:txt,likes:0,reais:0,created_at:new Date().toISOString()};
   var saved=await sbInsert('relatos',entry);
   if(saved){
     RELS.unshift({id:saved.id,hosp:hosp,v:val,t:txt,ln:0,fn:0,lk:false,fi:false});
     unlocked=true;stats();renderRelatos();closeS();showToast('Relato publicado!');
-  }else{
-    showToast('Erro ao publicar — tente novamente');
-  }
+  }else{showToast('Erro ao publicar — tente novamente');}
 }
 
 function relHtml(r){
@@ -945,8 +1000,6 @@ function renderAdmin(){
     '<div class="sc"><div class="sn" style="color:#B71C1C">'+crit+'</div><div class="sl">em quarentena</div></div>'+
     '<div class="sc"><div class="sn" style="color:#BF360C">'+rev+'</div><div class="sl">em revisão</div></div>'+
     '<div class="sc"><div class="sn" style="color:#1B5E20">'+appr+'</div><div class="sl">aprovados</div></div>';
-
-  // Recent activity
   var recent=DB.slice(0,6);
   document.getElementById('actList').innerHTML=recent.length?recent.map(function(c){
     var bc=c.status==='quarantine'?'badge-crit':c.status==='review'?'badge-warn':'badge-safe';
@@ -954,8 +1007,6 @@ function renderAdmin(){
     var ic=c.status==='quarantine'?'critical':c.status==='review'?'warning':'safe';
     return'<div class="threat '+ic+'"><div class="th-top"><div class="th-name">'+c.hospital+'</div><span class="th-badge '+bc+'">'+bl+'</span></div><div class="th-meta">R$ '+c.valor.toLocaleString('pt-BR')+' · '+c.fonte+(c.score?' · score: '+c.score:'')+'</div>'+((c.flags&&c.flags.length)?c.flags.slice(0,1).map(function(f){return'<div class="th-flag yellow">'+f+'</div>';}).join(''):'')+'</div>';
   }).join(''):'<div class="empty-s">Nenhuma atividade ainda.</div>';
-
-  // Suspicious
   var sus=DB.filter(function(c){return c.status!=='approved'&&c.status!=='ok';});
   document.getElementById('susList').innerHTML=sus.length?sus.map(function(c,i){
     var bc=c.status==='quarantine'?'badge-crit':'badge-warn';
@@ -965,8 +1016,6 @@ function renderAdmin(){
     var scoreColor=c.score<40?'#C62828':c.score<70?'#FF6F00':'#00A862';
     return'<div class="threat '+ic+'"><div class="th-top"><div class="th-name">'+c.hospital+'</div><span class="th-badge '+bc+'">'+bl+'</span></div><div class="th-meta">R$ '+c.valor.toLocaleString('pt-BR')+' · '+c.fonte+'</div>'+(c.score?'<div class="th-score"><div class="score-bar"><div class="score-fill" style="width:'+c.score+'%;background:'+scoreColor+';"></div></div><div class="score-lbl" style="color:'+scoreColor+'">'+c.score+'</div></div>':'')+'<div class="th-flags">'+flagsHtml+'</div><div class="th-acts"><button class="act app" onclick="adminAprove('+i+')">Aprovar</button><button class="act blk" onclick="adminBlock('+i+')">Bloquear</button></div></div>';
   }).join(''):'<div class="empty-s">Nenhuma ameaça detectada. Comunidade limpa.</div>';
-
-  // Insights
   var insights=[];
   if(appr===0)insights.push({tag:'aguardando dados',txt:'Nenhuma contribuição aprovada ainda.',sub:'Compartilhe o link para iniciar a coleta.'});
   else{
@@ -979,8 +1028,6 @@ function renderAdmin(){
     if(semDados.length)insights.push({tag:'regiões sem dados',txt:semDados.map(function(k){return REG[k].l;}).join(', ')+' sem contribuições',sub:'Concentre captação nessas regiões.'});
   }
   document.getElementById('insightsList').innerHTML=insights.map(function(i){return'<div class="insight"><div class="itag">'+i.tag+'</div><div class="itxt">'+i.txt+'</div><div class="isub">'+i.sub+'</div></div>';}).join('');
-
-  // Region coverage
   var regCov={centro:0,oeste:0,sul:0,norte:0,leste:0,abc:0,grande:0};
   var regTotal={centro:17,oeste:11,sul:12,norte:4,leste:5,abc:5,grande:2};
   H.forEach(function(h){if(getHospVal(h.n)>0&&regCov[h.r]!==undefined)regCov[h.r]++;});
@@ -991,7 +1038,6 @@ function renderAdmin(){
   }).join('');
 }
 
-var SUS_CACHE=[];
 function adminAprove(i){
   var sus=DB.filter(function(c){return c.status!=='approved'&&c.status!=='ok';});
   if(sus[i]){sus[i].status='approved';sus[i].score=100;sus[i].flags=[];if(sus[i].id)sbInsert('ajudas_log',{action:'approved',id:sus[i].id});}
@@ -1012,9 +1058,7 @@ function simular(){
   var e={hospital:h,valor:v,fonte:f,grupo:'',session_id:'sim_'+Math.random().toString(36).substr(2,5),created_at:new Date().toISOString(),_sim:true};
   var scored=getScore(e,DB);
   e.status=scored.status;e.score=scored.score;e.flags=scored.flags.map(function(f){return f.t;});
-  DB.unshift(e);
-  renderAdmin();
-  showToast('Simulado: R$'+v+' · score '+e.score+' · '+e.status);
+  DB.unshift(e);renderAdmin();showToast('Simulado: R$'+v+' · score '+e.score+' · '+e.status);
 }
 
 // ── NAV ──────────────────────────────────────────────────
@@ -1034,7 +1078,6 @@ function toggleAdmin(){
   if(isOn){a.style.cssText='display:none!important';mt.style.display='flex';document.getElementById('pg-mapa').classList.add('on');}
   else{['mapa','ranking','relatos'].forEach(function(p){document.getElementById('pg-'+p).classList.remove('on');});a.style.cssText='display:block';mt.style.display='none';renderAdmin();}
 }
-
 function adminLogout(){
   _clearAdminSession();
   var a=document.getElementById('pg-admin');var mt=document.getElementById('mainTabs');
@@ -1060,33 +1103,18 @@ function buildLegend(){
 function setF(f,btn){
   filt=f;
   document.querySelectorAll('.ft').forEach(function(t){t.classList.remove('on');});
-  btn.classList.add('on');
-  renderMarkers();
-  if(f!=='all'){
-    var fh=H.find(function(h){return h.r===f;});
-    if(fh&&mapObj)mapObj.flyTo([fh.lat,fh.lng],13,{animate:true,duration:.8});
-  }else if(mapObj)mapObj.flyTo([-23.5505,-46.6333],12,{animate:true,duration:.8});
+  btn.classList.add('on');renderMarkers();
+  if(f!=='all'){var fh=H.find(function(h){return h.r===f;});if(fh&&mapObj)mapObj.flyTo([fh.lat,fh.lng],13,{animate:true,duration:.8});}
+  else if(mapObj)mapObj.flyTo([-23.5505,-46.6333],12,{animate:true,duration:.8});
 }
 
 // ── SHEET ────────────────────────────────────────────────
-function openSheet(){document.getElementById('ov').classList.add('on');document.getElementById('sh').scrollTop=0;}
+function openSheet(){document.getElementById('ov').classList.add('on');document.getElementById('ov').querySelector('.sh').scrollTop=0;}
 function closeS(e){if(!e||e.target===document.getElementById('ov'))document.getElementById('ov').classList.remove('on');}
-
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2500);}
-
-// ── INIT ─────────────────────────────────────────────────
-document.getElementById('btnAdd').addEventListener('click',function(){openAdd();});
-document.getElementById('btnAdd').addEventListener('touchend',function(e){e.preventDefault();openAdd();});
-document.getElementById('btnRel').addEventListener('click',function(){openRelatos();});
-document.getElementById('btnRel').addEventListener('touchend',function(e){e.preventDefault();openRelatos();});
-document.getElementById('btnRelAdd').addEventListener('click',function(){openRelatos();});
-document.getElementById('btnRelAdd').addEventListener('touchend',function(e){e.preventDefault();openRelatos();});
-document.getElementById('closeX').addEventListener('click',function(){closeS();});
-document.getElementById('closeX').addEventListener('touchend',function(e){e.preventDefault();closeS();});
 
 // ── AUTOCOMPLETE ─────────────────────────────────────────
 var _acIdx=-1;
-
 function onSearchInput(){
   var q=(document.getElementById('sq').value||'').toLowerCase().trim();
   renderMarkers();
@@ -1097,10 +1125,8 @@ function onSearchInput(){
     return h.n.toLowerCase().indexOf(q)>-1||h.b.toLowerCase().indexOf(q)>-1||(h.g||'').toLowerCase().indexOf(q)>-1;
   }).slice(0,8);
   if(!matches.length){hideAC();return;}
-  dd.innerHTML='';
-  _acIdx=-1;
-  inp.style.borderRadius='10px 10px 0 0';
-  inp.style.borderColor='#00A862';
+  dd.innerHTML='';_acIdx=-1;
+  inp.style.borderRadius='10px 10px 0 0';inp.style.borderColor='#00A862';
   matches.forEach(function(h,i){
     var reg=REG[h.r]||{c:'#999',l:h.r};
     var val=getHospVal(h.n);
@@ -1114,8 +1140,7 @@ function onSearchInput(){
     if(rcCount>0)metaParts.push(rcCount+' contribuiç'+(rcCount>1?'ões':'ão'));
     if(relCount>0)metaParts.push(relCount+' relato'+(relCount>1?'s':''));
     var div=document.createElement('div');
-    div.className='ac-item';
-    div.dataset.idx=i;
+    div.className='ac-item';div.dataset.idx=i;
     div.innerHTML='<div class="ac-dot" style="background:'+reg.c+'"></div>'+
       '<div class="ac-body"><div class="ac-name">'+nameHl+'</div><div class="ac-meta">'+metaParts.join(' · ')+'</div></div>'+
       (valStr?'<div class="ac-val">'+valStr+'</div>':'')+
@@ -1123,33 +1148,22 @@ function onSearchInput(){
     div.addEventListener('mousedown',function(e){e.preventDefault();selectAC(h);});
     dd.appendChild(div);
   });
-  dd._matches=matches;
-  dd.style.display='block';
+  dd._matches=matches;dd.style.display='block';
 }
-
 function selectAC(h){
-  document.getElementById('sq').value=h.n;
-  hideAC();
-  renderMarkers();
-  if(mapObj){
-    mapObj.flyTo([h.lat,h.lng],15,{animate:true,duration:0.8});
-    setTimeout(function(){openH(h);},600);
-  }else{openH(h);}
+  document.getElementById('sq').value=h.n;hideAC();renderMarkers();
+  if(mapObj){mapObj.flyTo([h.lat,h.lng],15,{animate:true,duration:0.8});setTimeout(function(){openH(h);},600);}else{openH(h);}
 }
-
 function hideAC(){
-  var dd=document.getElementById('ac-dropdown');
-  var inp=document.getElementById('sq');
+  var dd=document.getElementById('ac-dropdown');var inp=document.getElementById('sq');
   if(dd)dd.style.display='none';
   if(inp){inp.style.borderRadius='';inp.style.borderColor='';}
   _acIdx=-1;
 }
-
 function onSearchKey(e){
   var dd=document.getElementById('ac-dropdown');
   if(!dd||dd.style.display==='none')return;
-  var items=dd.querySelectorAll('.ac-item');
-  if(!items.length)return;
+  var items=dd.querySelectorAll('.ac-item');if(!items.length)return;
   if(e.key==='ArrowDown'){e.preventDefault();_acIdx=Math.min(_acIdx+1,items.length-1);}
   else if(e.key==='ArrowUp'){e.preventDefault();_acIdx=Math.max(_acIdx-1,0);}
   else if(e.key==='Enter'){e.preventDefault();if(_acIdx>=0&&dd._matches&&dd._matches[_acIdx])selectAC(dd._matches[_acIdx]);return;}
@@ -1158,15 +1172,23 @@ function onSearchKey(e){
   if(_acIdx>=0)items[_acIdx].scrollIntoView({block:'nearest'});
 }
 
-buildFilters();
-buildLegend();
-renderRanking();
+// ── INIT ─────────────────────────────────────────────────
+document.getElementById('btnAdd').addEventListener('click',function(){openAdd();});
+document.getElementById('btnAdd').addEventListener('touchend',function(e){e.preventDefault();openAdd();});
+document.getElementById('btnRel').addEventListener('click',function(){openRelatos();});
+document.getElementById('btnRel').addEventListener('touchend',function(e){e.preventDefault();openRelatos();});
+document.getElementById('btnRelAdd').addEventListener('click',function(){openRelatos();});
+document.getElementById('btnRelAdd').addEventListener('touchend',function(e){e.preventDefault();openRelatos();});
+document.getElementById('closeX').addEventListener('click',function(){closeS();});
+document.getElementById('closeX').addEventListener('touchend',function(e){e.preventDefault();closeS();});
+
+buildFilters();buildLegend();renderRanking();
 
 window.addEventListener('load',function(){
   if(typeof L!=='undefined'){initMap();}
   else{var t=setInterval(function(){if(typeof L!=='undefined'){clearInterval(t);initMap();}},100);}
   syncDB();
-  setInterval(syncDB,30000); // sync every 30s
+  setInterval(syncDB,30000);
 });
 </script>
 </body>
